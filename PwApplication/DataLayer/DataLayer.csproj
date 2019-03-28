@@ -5,10 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="C:\Users\Katherine\Documents\GitHub\TestTz\TestTz\20190328185903_inital.cs" Link="20190328185903_inital.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.2.3">
       <PrivateAssets>all</PrivateAssets>
