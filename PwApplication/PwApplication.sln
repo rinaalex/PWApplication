@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataLayer", "DataLayer\Data
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceLayer", "ServiceLayer\ServiceLayer.csproj", "{E566EC3E-880B-431F-8A73-7D2BD3F77F74}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PwWebApp", "PwWebApp\PwWebApp.csproj", "{55F951FC-E5E2-4430-A847-29D44E40D370}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{E566EC3E-880B-431F-8A73-7D2BD3F77F74}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E566EC3E-880B-431F-8A73-7D2BD3F77F74}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E566EC3E-880B-431F-8A73-7D2BD3F77F74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55F951FC-E5E2-4430-A847-29D44E40D370}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55F951FC-E5E2-4430-A847-29D44E40D370}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55F951FC-E5E2-4430-A847-29D44E40D370}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55F951FC-E5E2-4430-A847-29D44E40D370}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
