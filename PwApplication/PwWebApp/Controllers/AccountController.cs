@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System.Security.Claims;
 using DataLayer.EfCode;
 using ServiceLayer.Accounts.Concrete;
+using ServiceLayer.Accounts;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -26,48 +27,54 @@ namespace PwWebApp.Controllers
         }
 
         [HttpPost("/token")]
-        public async Task Token()
+        public async Task Token([FromBody] LoginDto dto)
         {
-            var username = Request.Form["username"];
-            var password = Request.Form["password"];
+            if (ModelState.IsValid)
+            {
+                var identity = GetIdentity(dto);
+                if (identity == null)
+                {
+                    Response.StatusCode = 400;
+                    await Response.WriteAsync("Invalid username or password.");
+                    return;
+                }
 
-            var identity = GetIdentity(username, password);
-            if (identity == null)
+                var now = DateTime.UtcNow;
+                // создаем JWT-токен
+                var jwt = new JwtSecurityToken(
+                        issuer: AuthOptions.ISSUER,
+                        audience: AuthOptions.AUDIENCE,
+                        notBefore: now,
+                        claims: identity.Claims,
+                        expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
+                        signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+                var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+
+                var response = new
+                {
+                    access_token = encodedJwt,
+                    username = identity.Name
+                };
+
+                // сериализация ответа
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented }));
+            }
+            else
             {
                 Response.StatusCode = 400;
-                await Response.WriteAsync("Invalid username or password.");
+                var message = string.Join(" | ", ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage));
+                await Response.WriteAsync(message);
                 return;
             }
-
-            var now = DateTime.UtcNow;
-            // создаем JWT-токен
-            var jwt = new JwtSecurityToken(
-                    issuer: AuthOptions.ISSUER,
-                    audience: AuthOptions.AUDIENCE,
-                    notBefore: now,
-                    claims: identity.Claims,
-                    expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
-                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
-            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-
-            var response = new
-            {
-                access_token = encodedJwt,
-                username = identity.Name
-            };
-
-            // сериализация ответа
-            Response.ContentType = "application/json";
-            await Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented }));
         }
 
         // поиск пользователя
-        private ClaimsIdentity GetIdentity(string email, string password)
+        private ClaimsIdentity GetIdentity(LoginDto dto)
         {
             LoginService service = new LoginService(context);
-            var dto = new ServiceLayer.Accounts.LoginDto();
-            dto.Email = email;
-            dto.Password = password;
             var user = service.Login(dto);
             if (user != null)
             {
@@ -81,7 +88,7 @@ namespace PwWebApp.Controllers
                     ClaimsIdentity.DefaultRoleClaimType);
                 return claimsIdentity;
             }
-                return null;
+            return null;
         }
     }
 }
