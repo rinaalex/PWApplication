@@ -71,6 +71,33 @@ namespace PwWebApp.Controllers
             }
         }
 
+        [HttpPost("/registration")]
+        public async Task AddUser([FromBody]RegistrationDto dto)
+        {
+            if (ModelState.IsValid)
+            {
+                RegistrationService service = new RegistrationService(context);
+                if (service.AddUser(dto))
+                {
+                    await Response.WriteAsync("Successfull registration!");
+                }
+                else
+                {
+                    Response.StatusCode = 400;
+                    await Response.WriteAsync("The Email is already taken!");
+                }
+            }
+            else
+            {
+                Response.StatusCode = 400;
+                var message = string.Join(" | ", ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage));
+                await Response.WriteAsync(message);
+                return;
+            }
+        }
+
         // поиск пользователя
         private ClaimsIdentity GetIdentity(LoginDto dto)
         {
