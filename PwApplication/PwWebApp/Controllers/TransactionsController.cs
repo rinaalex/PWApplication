@@ -40,28 +40,8 @@ namespace PwWebApp.Controllers
             ListTransactionService service = new ListTransactionService(context);
             SortFilterOptions optrions = new SortFilterOptions();
             optrions.OrderByOptions = OrderByOptions.ByDateTimeDesc;
-            int userId = 3;
+            int userId = 4;
             var transactions = service.GetList(userId, optrions);
-
-            string s = null; 
-            foreach(var tr in transactions)
-            {
-                s += tr.ToString() + ";";
-            }
-
-            //TransactionListDto dto = new TransactionListDto
-            //{
-            //    TransferId = 1,
-            //    Correspondent = "1",
-            //    Amount = 2,
-            //    Timestamp = DateTime.Now,
-            //    Type = "2"
-            //};
-            //List<TransactionListDto> tr = new List<TransactionListDto>
-            //{
-            //    dto
-            //};
-            int c = transactions.Count();
             return transactions;
         }
 
@@ -74,8 +54,10 @@ namespace PwWebApp.Controllers
 
         // POST api/<controller>
         [HttpPost]
-        public void Post([FromBody]string value)
+        public void Post([FromBody]AddTransactionDto dto)
         {
+            AddTransactionService service = new AddTransactionService(context);
+            service.AddTransaction(dto);
         }
 
         // PUT api/<controller>/5

@@ -37,6 +37,14 @@
         <input type="submit" id="submitReg" value="Registration" />
         <input type="submit" id="canselReg" value="Cancel" />
     </div>
+    
+    <div id="transactionAdd" style="display:none">
+        <label>Recipient:</label>
+        <input type="text" id="recipientAdd" />
+        <label>Amount:</label>
+        <input type="text" id="amountAdd" />
+        <button id="addTransactionBtn">Add</button>
+    </div>
 
     <div id="transactionView" style="display:none">
     </div>
@@ -44,6 +52,13 @@
     <script src="https://github.com/douglascrockford/JSON-js/blob/master/json2.js"></script>
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script>
+        $(document).ready(function () {
+            $("#addTransactionBtn").click(function (event) {
+                event.preventDefault();
+                AddTransaction();
+            });
+        });
+
         var tokenKey = "accessToken";
         $('#submitLogin').click(function (e) {
             e.preventDefault();
@@ -64,6 +79,7 @@
                 $('.errorText').empty();
                 $('.errors').css('display', 'none');
                 $('.registrationBtn').css('display', 'none');
+                $('#transactionAdd').css('display', 'block');
                 GetTransactions();
                 sessionStorage.setItem(tokenKey, data.access_token);
                 console.log(data.access_token);
@@ -138,6 +154,29 @@
                 }
             });
         };
+
+        function AddTransaction() {
+            var transaction = {
+                SenderId: 3,
+                RecipientId: $('#recipientAdd').val(),
+                Amount: $('#amountAdd').val()
+            };
+            $.ajax({
+                url: '/api/transactions/',
+                type: 'POST',
+                data: JSON.stringify(transaction),
+                contentType: "application/json;charset=utf-8",
+                success: function (data) {
+                    GetTransactions();
+                    alert("success");
+                },
+                fail: function (data) {
+                    alert("fail");
+                    console.log(data);
+                }
+            });
+        }
+
         function WriteResponse(transactions) {
             //alert("write");
             var strResult = "<table><th>Id</th><th>Date/Time</th><th>Correspondent</th><th>Amount</th><th>Type</th><th>Resulting balance</th>";
