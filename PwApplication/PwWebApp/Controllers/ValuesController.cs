@@ -18,7 +18,7 @@ namespace PwWebApp.Controllers
             return Ok($"Ваш логин: {User.Identity.Name}");
         }
 
-        [Authorize(Roles = "user")]
+        //[Authorize(Roles = "user")]
         [Route("getrole")]
         public IActionResult GetRole()
         {

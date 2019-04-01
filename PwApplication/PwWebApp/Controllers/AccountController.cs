@@ -107,7 +107,7 @@ namespace PwWebApp.Controllers
             {
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserName),
+                    new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserId.ToString()),
                     new Claim(ClaimsIdentity.DefaultRoleClaimType, "user")
                 };
                 ClaimsIdentity claimsIdentity =

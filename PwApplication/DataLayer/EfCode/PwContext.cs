@@ -10,6 +10,7 @@ namespace DataLayer.EfCode
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Transfer> Transfers { get; set; }
+        public DbSet<Operation> Operations { get; set; }
 
         public PwContext(DbContextOptions<PwContext> options) : base(options)
         { }

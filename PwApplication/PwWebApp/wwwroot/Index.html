@@ -21,7 +21,7 @@
         <input type="password" id="passwordLogin" /><br /><br />
         <input type="submit" id="submitLogin" value="Login" />
     </div>
-    <div class="registrationBtn">
+    <div class="registrationBtn" style="display:block;">
         <input type="submit" id="registrationBtn" value="Registration" />
     </div>
     <div class="regForm" style="display:none;">
@@ -38,6 +38,10 @@
         <input type="submit" id="canselReg" value="Cancel" />
     </div>
 
+    <div id="transactionView" style="display:none">
+    </div>
+
+    <script src="https://github.com/douglascrockford/JSON-js/blob/master/json2.js"></script>
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script>
         var tokenKey = "accessToken";
@@ -60,12 +64,13 @@
                 $('.errorText').empty();
                 $('.errors').css('display', 'none');
                 $('.registrationBtn').css('display', 'none');
+                GetTransactions();
                 sessionStorage.setItem(tokenKey, data.access_token);
                 console.log(data.access_token);
-                }).fail(function (data) {
-                    console.log(data);
-                    $('.errorText').text(data.responseText);
-                    $('.errors').css('display', 'block');                    
+            }).fail(function (data) {
+                console.log(data);
+                $('.errorText').text(data.responseText);
+                $('.errors').css('display', 'block');
             });
         });
 
@@ -73,7 +78,7 @@
             e.preventDefault();
             $('.loginForm').css('display', 'block');
             $('.userInfo').css('display', 'none');
-            sessionStorage.removeItem(tokenKey);            
+            sessionStorage.removeItem(tokenKey);
         });
 
         $('#registrationBtn').click(function (e) {
@@ -102,11 +107,11 @@
                 $('.loginForm').css('display', 'block');
                 $('.errorText').empty();
                 $('.errors').css('display', 'none');
-                }).fail(function (data) {
-                    console.log(data);
-                    $('.errorText').text(data.responseText);
-                    $('.errors').css('display', 'block');
-                });
+            }).fail(function (data) {
+                console.log(data);
+                $('.errorText').text(data.responseText);
+                $('.errors').css('display', 'block');
+            });
         });
 
         $('#canselReg').click(function (e) {
@@ -116,6 +121,37 @@
             $('.errorText').empty();
             $('.errors').css('display', 'none');
         });
+
+        function GetTransactions() {
+            $('#transactionView').css('display', 'block');
+            $.ajax({
+                url: 'api/transactions',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    //alert("tr");
+                    console.log(data);
+                    WriteResponse(data);
+                },
+                fail: function (data) {
+                    alert("fail");
+                }
+            });
+        };
+        function WriteResponse(transactions) {
+            //alert("write");
+            var strResult = "<table><th>Id</th><th>Date/Time</th><th>Correspondent</th><th>Amount</th><th>Type</th><th>Resulting balance</th>";
+            $.each(transactions, function (index, transaction) {
+                strResult += "<tr><td>" + transaction.transferId + "</td>";
+                strResult += "<td>" + transaction.timestamp + "</td>";
+                strResult += "<td>" + transaction.correspondent + "</td>";
+                strResult += "<td>" + transaction.amount + "</td>";
+                strResult += "<td>" + transaction.type + "</td>";
+                strResult += "<td>" + transaction.resultingBalance + "</td></tr>";
+            });
+            strResult += "</table>";
+            $("#transactionView").html(strResult);
+        };
     </script>
 </body>
 </html>

@@ -21,6 +21,6 @@ namespace DataLayer.EfClasses
         public int RecipientId { get; set; }
         public virtual User Recipient { get; set; }
 
-        public virtual ICollection<Operation> Operations { get; set; }
+        public ICollection<Operation> Operations { get; set; }
     }
 }
