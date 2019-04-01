@@ -5,15 +5,17 @@
     <title>PW Application</title>
 </head>
 <body>
-    <div class="userInfo" style="display:none;">
-        <p>Вы вошли как: <span class="userName"></span></p>
-        <input type="button" value="Logout" id="logOut" />
-    </div>
+    <div id="userInfo" style="display:none;">
+        <p>Your Id: <span id="userId"></span></p>
+        <p>Your name: <span id="userName"></span></p>
+        <p>Your balance: <span id="userBalance"></span></p>
+        <input type="button" value="Logout" id="logOutBtn" />
+    </div><br />
 
-    <div class="errors" style="color:red;display:none;">
-        <p><span class="errorText"></span></p>
+    <div id="errors" style="color:red;display:none;">
+        <p><span id="errorText"></span></p>
     </div>
-    <div class="loginForm">
+    <div id="loginForm">
         <h3>Authorization</h3>
         <label>Enter email:</label><br />
         <input type="email" id="emailLogin" /> <br /><br />
@@ -21,7 +23,7 @@
         <input type="password" id="passwordLogin" /><br /><br />
         <input type="submit" id="submitLogin" value="Login" />
     </div>
-    <div class="registrationBtn" style="display:block;">
+    <div id="registration" style="display:block;">
         <input type="submit" id="registrationBtn" value="Registration" />
     </div>
     <div class="regForm" style="display:none;">
@@ -36,17 +38,17 @@
         <input type="password" id="passwordConfirmReg" /><br /><br />
         <input type="submit" id="submitReg" value="Registration" />
         <input type="submit" id="canselReg" value="Cancel" />
-    </div>
+    </div><br />
     
-    <div id="transactionAdd" style="display:none">
+    <div id="addTransactionForm" style="display:none">
         <label>Recipient:</label>
         <input type="text" id="recipientAdd" />
         <label>Amount:</label>
         <input type="text" id="amountAdd" />
         <button id="addTransactionBtn">Add</button>
-    </div>
+    </div><br/>
 
-    <div id="transactionView" style="display:none">
+    <div id="viewTransactions" style="display:none">
     </div>
 
     <script src="https://github.com/douglascrockford/JSON-js/blob/master/json2.js"></script>
@@ -73,13 +75,13 @@
                 data: JSON.stringify(loginData),
                 contentType: "application/json;charset=utf-8"
             }).success(function (data) {
-                $('.userName').text(data.username);
-                $('.userInfo').css('display', 'block');
-                $('.loginForm').css('display', 'none');
-                $('.errorText').empty();
-                $('.errors').css('display', 'none');
-                $('.registrationBtn').css('display', 'none');
-                $('#transactionAdd').css('display', 'block'); 
+                $('#userName').text(data.username);
+                $('#userInfo').css('display', 'block');
+                $('#loginForm').css('display', 'none');
+                $('#errorText').empty();
+                $('#errors').css('display', 'none');
+                $('#registration').css('display', 'none');
+                $('#addTransactionForm').css('display', 'block'); 
                 
                 sessionStorage.setItem(tokenKey, data.access_token);
                 console.log(data.access_token);
@@ -87,24 +89,26 @@
                 GetTransactions();                
             }).fail(function (data) {
                 console.log(data);
-                $('.errorText').text(data.responseText);
-                $('.errors').css('display', 'block');
+                $('#errorText').text(data.responseText);
+                $('#errors').css('display', 'block');
             });
         });
 
-        $('#logOut').click(function (e) {
+        $('#logOutBtn').click(function (e) {
             e.preventDefault();
-            $('.loginForm').css('display', 'block');
-            $('.userInfo').css('display', 'none');
-            $('#transactionView').css('display', 'none');
-            $('#transactionAdd').css('display', 'none');
+            $('#loginForm').css('display', 'block');
+            $('#userInfo').css('display', 'none');
+            $('#viewTransactions').css('display', 'none');
+            $('#addTransactionForm').css('display', 'none');
             sessionStorage.removeItem(tokenKey);
         });
 
         $('#registrationBtn').click(function (e) {
-            $('.loginForm').css('display', 'none');
+            $('#loginForm').css('display', 'none');
             $('.regForm').css('display', 'block');
-            $('.registrationBtn').css('display', 'none');
+            $('#registration').css('display', 'none');
+            $('#errorText').empty();
+            $('#errors').css('display', 'none');
         });
 
         $('#submitReg').click(function (e) {
@@ -123,26 +127,26 @@
                 contentType: "application/json;charset=utf-8"
             }).success(function (data) {
                 $('.regForm').css('display', 'none');
-                $('.loginForm').css('display', 'block');
-                $('.errorText').empty();
-                $('.errors').css('display', 'none');
+                $('#loginForm').css('display', 'block');
+                $('#errorText').empty();
+                $('#errors').css('display', 'none');
             }).fail(function (data) {
                 console.log(data);
-                $('.errorText').text(data.responseText);
-                $('.errors').css('display', 'block');
+                $('#errorText').text(data.responseText);
+                $('#errors').css('display', 'block');
             });
         });
 
         $('#canselReg').click(function (e) {
-            $('.loginForm').css('display', 'block');
+            $('#loginForm').css('display', 'block');
             $('.regForm').css('display', 'none');
-            $('.registrationBtn').css('display', 'block');
-            $('.errorText').empty();
-            $('.errors').css('display', 'none');
+            $('#registration').css('display', 'block');
+            $('#errorText').empty();
+            $('#errors').css('display', 'none');
         });
 
         function GetTransactions() {
-            $('#transactionView').css('display', 'block');
+            $('#viewTransactions').css('display', 'block');
             $.ajax({
                 url: 'api/transactions',
                 type: 'GET',
@@ -196,7 +200,7 @@
                 strResult += "<td>" + transaction.resultingBalance + "</td></tr>";
             });
             strResult += "</table>";
-            $("#transactionView").html(strResult);
+            $("#viewTransactions").html(strResult);
         };
     </script>
 </body>
