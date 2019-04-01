@@ -79,10 +79,12 @@
                 $('.errorText').empty();
                 $('.errors').css('display', 'none');
                 $('.registrationBtn').css('display', 'none');
-                $('#transactionAdd').css('display', 'block');
-                GetTransactions();
+                $('#transactionAdd').css('display', 'block'); 
+                
                 sessionStorage.setItem(tokenKey, data.access_token);
                 console.log(data.access_token);
+
+                GetTransactions();                
             }).fail(function (data) {
                 console.log(data);
                 $('.errorText').text(data.responseText);
@@ -94,6 +96,8 @@
             e.preventDefault();
             $('.loginForm').css('display', 'block');
             $('.userInfo').css('display', 'none');
+            $('#transactionView').css('display', 'none');
+            $('#transactionAdd').css('display', 'none');
             sessionStorage.removeItem(tokenKey);
         });
 
@@ -118,7 +122,6 @@
                 data: JSON.stringify(regData),
                 contentType: "application/json;charset=utf-8"
             }).success(function (data) {
-                alert(data);
                 $('.regForm').css('display', 'none');
                 $('.loginForm').css('display', 'block');
                 $('.errorText').empty();
@@ -144,13 +147,16 @@
                 url: 'api/transactions',
                 type: 'GET',
                 dataType: 'json',
+                beforeSend: function (xhr) {
+                    var token = sessionStorage.getItem(tokenKey);
+                    xhr.setRequestHeader("Authorization", "Bearer " + token);
+                },
                 success: function (data) {
-                    //alert("tr");
                     console.log(data);
                     WriteResponse(data);
                 },
                 fail: function (data) {
-                    alert("fail");
+                    console.log(data);
                 }
             });
         };
@@ -166,19 +172,20 @@
                 type: 'POST',
                 data: JSON.stringify(transaction),
                 contentType: "application/json;charset=utf-8",
+                beforeSend: function (xhr) {
+                    var token = sessionStorage.getItem(tokenKey);
+                    xhr.setRequestHeader("Authorization", "Bearer " + token);
+                },
                 success: function (data) {
                     GetTransactions();
-                    alert("success");
                 },
                 fail: function (data) {
-                    alert("fail");
                     console.log(data);
                 }
             });
         }
 
         function WriteResponse(transactions) {
-            //alert("write");
             var strResult = "<table><th>Id</th><th>Date/Time</th><th>Correspondent</th><th>Amount</th><th>Type</th><th>Resulting balance</th>";
             $.each(transactions, function (index, transaction) {
                 strResult += "<tr><td>" + transaction.transferId + "</td>";

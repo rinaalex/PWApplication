@@ -7,6 +7,7 @@ using DataLayer.EfCode;
 using ServiceLayer.Transfers;
 using ServiceLayer.Transfers.Concrete;
 using ServiceLayer.Transfers.QueryObjects;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -22,25 +23,14 @@ namespace PwWebApp.Controllers
             this.context = context;
         }
 
-        // GET: api/<controller>
-        //[HttpGet]
-        //public IQueryable<TransactionListDto> Get()
-        //{
-        //    ListTransactionService service = new ListTransactionService(context);
-        //    SortFilterOptions optrions = new SortFilterOptions();
-        //    optrions.OrderByOptions = OrderByOptions.ByDateTimeDesc;
-        //    int userId = 3;            
-        //    var transactions = service.GetList(userId, optrions);
-        //    return transactions;
-        //}
-
+        [Authorize]
         [HttpGet]
         public IEnumerable<TransactionListDto> Get()
         {
             ListTransactionService service = new ListTransactionService(context);
             SortFilterOptions optrions = new SortFilterOptions();
             optrions.OrderByOptions = OrderByOptions.ByDateTimeDesc;
-            int userId = 4;
+            int userId = Convert.ToInt32(User.Identity.Name);
             var transactions = service.GetList(userId, optrions);
             return transactions;
         }
@@ -53,9 +43,11 @@ namespace PwWebApp.Controllers
         }
 
         // POST api/<controller>
+        [Authorize]
         [HttpPost]
         public void Post([FromBody]AddTransactionDto dto)
         {
+            dto.SenderId = Convert.ToInt32(User.Identity.Name);
             AddTransactionService service = new AddTransactionService(context);
             service.AddTransaction(dto);
         }
