@@ -42,7 +42,7 @@
     
     <div id="addTransactionForm" style="display:none">
         <label>Recipient:</label>
-        <input type="text" id="recipientAdd" />
+        <input type="text" id="recipientAdd"/>
         <label>Amount:</label>
         <input type="text" id="amountAdd" />
         <button id="addTransactionBtn">Add</button>
@@ -102,6 +102,8 @@
             $('#recipientAmount').empty();
             $('#viewTransactions').css('display', 'none');
             $('#addTransactionForm').css('display', 'none');
+            $('#errors').css('display', 'none');
+            $('#errorText').empty();
             sessionStorage.removeItem(tokenKey);
         });
 
@@ -188,7 +190,6 @@
 
         function AddTransaction() {
             var transaction = {
-                SenderId: 3,
                 RecipientId: $('#recipientAdd').val(),
                 Amount: $('#amountAdd').val()
             };
@@ -209,7 +210,7 @@
                     $('#recipientAdd').empty();
                     $('#recipientAmount').empty();
                 },
-                fail: function (data) {
+                error: function (data) {
                     console.log(data);
                     $('#errorText').text(data.responseText);
                     $('#errors').css('display', 'block');

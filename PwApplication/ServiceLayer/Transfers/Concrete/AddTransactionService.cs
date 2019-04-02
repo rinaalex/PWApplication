@@ -12,6 +12,7 @@ namespace ServiceLayer.Transfers.Concrete
     public class AddTransactionService
     {
         private readonly PwContext context;
+        public string LastError { get; private set; }
 
         public AddTransactionService(PwContext context)
         {
@@ -54,44 +55,65 @@ namespace ServiceLayer.Transfers.Concrete
         /// <returns></returns>
         public Transfer AddTransaction(AddTransactionDto dto)
         {
-            Transfer newTransaction = new Transfer
+            if (isValidBalance(dto.SenderId, dto.Amount))
             {
-                SenderId = dto.SenderId,
-                RecipientId = dto.RecipientId,
-                Amount = dto.Amount,
-                Timestamp = DateTime.Now
-            };
-            context.Transfers.Add(newTransaction);
+                Transfer newTransaction = new Transfer
+                {
+                    SenderId = dto.SenderId,
+                    RecipientId = dto.RecipientId,
+                    Amount = dto.Amount,
+                    Timestamp = DateTime.Now
+                };
+                context.Transfers.Add(newTransaction);
 
-            Operation outgoingOperation = new Operation
+                Operation outgoingOperation = new Operation
+                {
+                    TransferId = newTransaction.TransferId,
+                    UserId = newTransaction.SenderId,
+                    Credit = newTransaction.Amount,
+                    ResultingBalance = context.Users.Where(p => p.UserId == newTransaction.SenderId)
+                    .Select(p => p.Balance).FirstOrDefault() - newTransaction.Amount
+                };
+                context.Operations.Add(outgoingOperation);
+
+                Operation incomingOperation = new Operation
+                {
+                    TransferId = newTransaction.TransferId,
+                    UserId = newTransaction.RecipientId,
+                    Debit = newTransaction.Amount,
+                    ResultingBalance = context.Users.Where(p => p.UserId == newTransaction.RecipientId)
+                    .Select(p => p.Balance).FirstOrDefault() + newTransaction.Amount
+                };
+                context.Operations.Add(incomingOperation);
+
+                var sender = context.Users.Where(p => p.UserId == dto.SenderId).SingleOrDefault();
+                sender.Balance = outgoingOperation.ResultingBalance;
+
+                var recipient = context.Users.Where(p => p.UserId == dto.RecipientId).SingleOrDefault();
+                recipient.Balance = incomingOperation.ResultingBalance;
+
+                context.SaveChanges();
+                return newTransaction;
+            }
+            else
             {
-                TransferId = newTransaction.TransferId,
-                UserId = newTransaction.SenderId,
-                Credit = newTransaction.Amount,
-                ResultingBalance = context.Users.Where(p => p.UserId == newTransaction.SenderId)
-                .Select(p => p.Balance).FirstOrDefault() - newTransaction.Amount
-            };
-            context.Operations.Add(outgoingOperation);
-
-            Operation incomingOperation = new Operation
-            {
-                TransferId = newTransaction.TransferId,
-                UserId = newTransaction.RecipientId,
-                Debit = newTransaction.Amount,
-                ResultingBalance = context.Users.Where(p => p.UserId == newTransaction.RecipientId)
-                .Select(p => p.Balance).FirstOrDefault() + newTransaction.Amount
-            };
-            context.Operations.Add(incomingOperation);
-
-            var sender = context.Users.Where(p => p.UserId == dto.SenderId).SingleOrDefault();
-            sender.Balance = incomingOperation.ResultingBalance;
-
-            var recipient = context.Users.Where(p => p.UserId == dto.RecipientId).SingleOrDefault();
-            recipient.Balance = outgoingOperation.ResultingBalance;
-
-            context.SaveChanges();
-            return newTransaction;
+                return null;
+            }
         }
 
+        private bool isValidBalance(int userId, decimal amount)
+        {
+            var userBalance = context.Users.Where(p => p.UserId == userId).Select(p=>p.Balance).SingleOrDefault();
+            if(userBalance-amount<0)
+            {
+                LastError = "You don't have enough PWs!";
+                return false;
+            }
+            else
+            {
+                LastError = string.Empty;
+                return true;
+            }
+        }
     }
 }

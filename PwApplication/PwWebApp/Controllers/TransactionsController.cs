@@ -8,6 +8,7 @@ using ServiceLayer.Transfers;
 using ServiceLayer.Transfers.Concrete;
 using ServiceLayer.Transfers.QueryObjects;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -45,11 +46,29 @@ namespace PwWebApp.Controllers
         // POST api/<controller>
         [Authorize]
         [HttpPost]
-        public void Post([FromBody]AddTransactionDto dto)
+        public async Task Post([FromBody]AddTransactionDto dto)
         {
-            dto.SenderId = Convert.ToInt32(User.Identity.Name);
-            AddTransactionService service = new AddTransactionService(context);
-            service.AddTransaction(dto);
+            if (ModelState.IsValid)
+            {
+                dto.SenderId = Convert.ToInt32(User.Identity.Name);
+                AddTransactionService service = new AddTransactionService(context);
+                var transaction = service.AddTransaction(dto);
+                if (transaction == null)
+                {
+                    Response.StatusCode = 400;
+                    await Response.WriteAsync(service.LastError);
+                    return;
+                }
+            }
+            else
+            {
+                Response.StatusCode = 400;
+                var message = string.Join(" | ", ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage));
+                await Response.WriteAsync(message);
+                return;
+            }
         }
 
         // PUT api/<controller>/5
