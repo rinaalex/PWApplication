@@ -6,15 +6,17 @@
 </head>
 <body>
     <div id="userInfo" style="display:none;">
-        <p>Your Id: <span id="userId"></span></p>
+        <h3>Account infornation</h3>
+        <!--<p>Your Id: <span id="userId"></span></p>-->
         <p>Your name: <span id="userName"></span></p>
         <p>Your balance: <span id="userBalance"></span></p>
         <input type="button" value="Logout" id="logOutBtn" />
-    </div><br />
+    </div>
 
     <div id="errors" style="color:red;display:none;">
         <p><span id="errorText"></span></p>
     </div>
+
     <div id="loginForm">
         <h3>Authorization</h3>
         <label>Enter email:</label><br />
@@ -23,9 +25,11 @@
         <input type="password" id="passwordLogin" /><br /><br />
         <input type="submit" id="submitLogin" value="Login" />
     </div>
+
     <div id="registration" style="display:block;">
         <input type="submit" id="registrationBtn" value="Registration" />
     </div>
+
     <div id="regForm" style="display:none;">
         <h3>Registration</h3>
         <label>Enter name:</label><br />
@@ -44,14 +48,9 @@
         <label>Recipient:</label>
         <input id="recipientAdd" list="recipientList"/>
         <datalist id="recipientList">
-            <!--<option value="A item" data-xyz="1">
-            <option value="aa item" data-xyz="2">
-            <option value="C item" data-xyz="3">
-            <option value="D item" data-xyz="4">
-            <option value="E item" data-xyz="5">-->
         </datalist>
         <label>Amount:</label>
-        <input type="text" id="amountAdd" />
+        <input type="number" min="1" id="amountAdd" />
         <button id="addTransactionBtn">Add</button>
     </div><br/>
 
@@ -63,15 +62,16 @@
     
     <script type="text/javascript">
         $(document).ready(function () {
+            // Кнопка Добавление транзакции
             $("#addTransactionBtn").click(function (event) {
                 event.preventDefault();
                 AddTransaction();
             });
-
         });
 
         var timerId;
         var tokenKey = "accessToken";
+        // Авторизация
         $('#submitLogin').click(function (e) {
             e.preventDefault();
             var loginData = {
@@ -92,22 +92,25 @@
                 $('#registration').css('display', 'none');
                 $('#addTransactionForm').css('display', 'block');
 
+                // Сохранение токена
                 sessionStorage.setItem(tokenKey, data.access_token);
 
+                // Обновление информации о балансе 1 раз в секунду
                 timerId = setInterval(function () {
                     GetUserInfo();
                 }, 1000);
 
-                GetTransactions();
+                //GetTransactions();
                 GetRecipientList();
 
             }).fail(function (data) {
-                console.log(data);
+                //console.log(data);
                 $('#errorText').text(data.responseText);
                 $('#errors').css('display', 'block');
             });
         });
 
+        // Выход из учетной записи
         $('#logOutBtn').click(function (e) {
             e.preventDefault();
             $('#loginForm').css('display', 'block');
@@ -118,10 +121,13 @@
             $('#addTransactionForm').css('display', 'none');
             $('#errors').css('display', 'none');
             $('#errorText').empty();
+            // Удаление токена
             sessionStorage.removeItem(tokenKey);
+            // Остановка таймера обновления информации о пользователе
             clearInterval(timerId);
         });
 
+        // Кнопка Регистрация
         $('#registrationBtn').click(function (e) {
             $('#loginForm').css('display', 'none');
             $('#regForm').css('display', 'block');
@@ -130,6 +136,7 @@
             $('#errors').css('display', 'none');
         });
 
+        // Регистрация
         $('#submitReg').click(function (e) {
             e.preventDefault();
             var regData =
@@ -156,6 +163,7 @@
             });
         });
 
+        // Выход из регистрации
         $('#canselReg').click(function (e) {
             $('#loginForm').css('display', 'block');
             $('#regForm').css('display', 'none');
@@ -164,7 +172,11 @@
             $('#errors').css('display', 'none');
         });
 
+        // Загрузка информации о пользователе
         function GetUserInfo() {
+
+            var oldBalance = $("#userBalance").text();
+
             $.ajax({
                 url: '/userInfo',
                 type: 'GET',
@@ -176,6 +188,10 @@
                 success: function (data) {
                     $("#userName").text(data.userName);
                     $("#userBalance").text(data.balance);
+                    // Если баланс изменился, обновляем список транзакций
+                    if (oldBalance != data.balance) {
+                        GetTransactions();
+                    };
                 },
                 fail: function (data) {
                     console.log(data);
@@ -183,6 +199,7 @@
             });
         };
 
+        // Загрузка списка транзакций пользователя
         function GetTransactions() {
             $('#viewTransactions').css('display', 'block');
             $.ajax({
@@ -202,43 +219,50 @@
             });
         };
 
+        // Создание новой транзакции
         function AddTransaction() {
-
+            // Получение id получателя, выбранного в списке
             var recipientName = $('#recipientAdd').val();
             var recipientId = $('#recipientList option').filter(function () {
                 return this.value == recipientName;
             }).data('value');
-
-            var transaction = {
-                RecipientId: recipientId,
-                Amount: $('#amountAdd').val()
-            };
-
-            $.ajax({
-                url: '/api/transactions/',
-                type: 'POST',
-                data: JSON.stringify(transaction),
-                contentType: "application/json;charset=utf-8",
-                beforeSend: function (xhr) {
-                    var token = sessionStorage.getItem(tokenKey);
-                    xhr.setRequestHeader("Authorization", "Bearer " + token);
-                },
-                success: function () {
-                    GetUserInfo();
-                    GetTransactions();
-                    $('#errorText').empty();
-                    $('#errors').css('display', 'none');
-                    $('#recipientAdd').empty();
-                    $('#recipientAmount').empty();
-                },
-                error: function (data) {
-                    console.log(data);
-                    $('#errorText').text(data.responseText);
-                    $('#errors').css('display', 'block');
-                }
-            });
+            // Если введено несуществующее имя
+            if (recipientId == null) {
+                $('#errorText').text("Recipient not found!");
+                $('#errors').css('display', 'block');
+            }
+            else {
+                var transaction = {
+                    RecipientId: recipientId,
+                    Amount: $('#amountAdd').val()
+                };
+                $.ajax({
+                    url: '/api/transactions/',
+                    type: 'POST',
+                    data: JSON.stringify(transaction),
+                    contentType: "application/json;charset=utf-8",
+                    beforeSend: function (xhr) {
+                        var token = sessionStorage.getItem(tokenKey);
+                        xhr.setRequestHeader("Authorization", "Bearer " + token);
+                    },
+                    success: function () {
+                        GetUserInfo();
+                        GetTransactions();
+                        $('#errorText').empty();
+                        $('#errors').css('display', 'none');
+                        $('#recipientAdd').empty();
+                        $('#recipientAmount').empty();
+                    },
+                    error: function (data) {
+                        console.log(data);
+                        $('#errorText').text(data.responseText);
+                        $('#errors').css('display', 'block');
+                    }
+                });
+            }
         }
 
+        // Вывод списка транзакций в таблицу
         function WriteResponse(transactions) {
             var strResult = "<table><th>Id</th><th>Date/Time</th><th>Correspondent</th><th>Amount</th><th>Type</th><th>Resulting balance</th>";
             $.each(transactions, function (index, transaction) {
@@ -253,6 +277,7 @@
             $("#viewTransactions").html(strResult);
         };
 
+        // Загрузка списка получателей
         function GetRecipientList() {
             $.ajax({
                 url: '/getRecipientList',
@@ -271,6 +296,7 @@
             });
         };
 
+        // Вывод списка получателей
         function WriteRecipientList(recipients) {
             var strResult;
             $.each(recipients, function (index, recipient) {
