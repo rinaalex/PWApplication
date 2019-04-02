@@ -85,7 +85,7 @@
                 
                 sessionStorage.setItem(tokenKey, data.access_token);
                 console.log(data.access_token);
-
+                GetUserInfo();
                 GetTransactions();                
             }).fail(function (data) {
                 console.log(data);
@@ -98,6 +98,8 @@
             e.preventDefault();
             $('#loginForm').css('display', 'block');
             $('#userInfo').css('display', 'none');
+            $('#recipientAdd').empty();
+            $('#recipientAmount').empty();
             $('#viewTransactions').css('display', 'none');
             $('#addTransactionForm').css('display', 'none');
             sessionStorage.removeItem(tokenKey);
@@ -105,7 +107,7 @@
 
         $('#registrationBtn').click(function (e) {
             $('#loginForm').css('display', 'none');
-            $('.regForm').css('display', 'block');
+            $('#regForm').css('display', 'block');
             $('#registration').css('display', 'none');
             $('#errorText').empty();
             $('#errors').css('display', 'none');
@@ -145,6 +147,25 @@
             $('#errors').css('display', 'none');
         });
 
+        function GetUserInfo() {
+            $.ajax({
+                url: '/userInfo',
+                type: 'GET',
+                dataType: 'json',
+                beforeSend: function (xhr) {
+                    var token = sessionStorage.getItem(tokenKey);
+                    xhr.setRequestHeader("Authorization", "Bearer " + token);
+                },
+                success: function (data) {
+                    $("#userName").text(data.userName);
+                    $("#userBalance").text(data.balance);
+                },
+                fail: function (data) {
+                    console.log(data);                    
+                }
+            });
+        };
+
         function GetTransactions() {
             $('#viewTransactions').css('display', 'block');
             $.ajax({
@@ -180,11 +201,18 @@
                     var token = sessionStorage.getItem(tokenKey);
                     xhr.setRequestHeader("Authorization", "Bearer " + token);
                 },
-                success: function (data) {
+                success: function () {
+                    GetUserInfo();
                     GetTransactions();
+                    $('#errorText').empty();
+                    $('#errors').css('display', 'none');
+                    $('#recipientAdd').empty();
+                    $('#recipientAmount').empty();
                 },
                 fail: function (data) {
                     console.log(data);
+                    $('#errorText').text(data.responseText);
+                    $('#errors').css('display', 'block');
                 }
             });
         }

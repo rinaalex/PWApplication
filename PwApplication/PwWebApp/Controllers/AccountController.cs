@@ -11,6 +11,7 @@ using System.Security.Claims;
 using DataLayer.EfCode;
 using ServiceLayer.Accounts.Concrete;
 using ServiceLayer.Accounts;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -97,6 +98,17 @@ namespace PwWebApp.Controllers
                 return;
             }
         }
+
+        [Authorize]
+        [HttpGet("/userInfo")]
+        public InfoUserDto GetUserInfo()
+        {
+            int userId = Convert.ToInt32(User.Identity.Name);
+            InfoUserService service = new InfoUserService(context);
+            var user = service.GetUserInfo(userId);
+            return user;
+        }
+
 
         // поиск пользователя
         private ClaimsIdentity GetIdentity(LoginDto dto)

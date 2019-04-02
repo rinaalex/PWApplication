@@ -21,15 +21,20 @@ namespace ServiceLayer.Accounts.Concrete
         /// </summary>
         /// <param name="userId">Идентификатор пользователя</param>
         /// <returns></returns>
-        public InfoUserDto GetUserInfo(string email)
+        public InfoUserDto GetUserInfo(int userId)
         {
-            var user = context.Users.AsNoTracking().Where(p => p.Email == email).SingleOrDefault();
-            return new InfoUserDto
+            var user = context.Users.AsNoTracking().Where(p => p.UserId == userId).SingleOrDefault();
+            if (user != null)
             {
-                UserId = user.UserId,
-                UserName = user.UserName,
-                Balance = user.Balance
-            };
+                return new InfoUserDto
+                {
+                    UserId = user.UserId,
+                    UserName = user.UserName,
+                    Balance = user.Balance
+                };
+            }
+            else
+                return null; 
         }
     }
 }
