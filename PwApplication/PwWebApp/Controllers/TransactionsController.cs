@@ -71,6 +71,16 @@ namespace PwWebApp.Controllers
             }
         }
 
+        [Authorize]
+        [HttpGet("/getRecipientList")]
+        public IEnumerable<RecipientListDto> GetRecipientList()
+        {
+            RecipientListService service = new RecipientListService(context);
+            var senderId = Convert.ToInt32(User.Identity.Name);
+            var recipients = service.GetRecipientList(senderId);
+            return recipients;
+        }
+
         // PUT api/<controller>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody]string value)

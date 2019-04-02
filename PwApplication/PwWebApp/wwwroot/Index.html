@@ -26,7 +26,7 @@
     <div id="registration" style="display:block;">
         <input type="submit" id="registrationBtn" value="Registration" />
     </div>
-    <div class="regForm" style="display:none;">
+    <div id="regForm" style="display:none;">
         <h3>Registration</h3>
         <label>Enter name:</label><br />
         <input type="text" id="userNameReg" /><br /><br />
@@ -42,7 +42,14 @@
     
     <div id="addTransactionForm" style="display:none">
         <label>Recipient:</label>
-        <input type="text" id="recipientAdd"/>
+        <input id="recipientAdd" list="recipientList"/>
+        <datalist id="recipientList">
+            <!--<option value="A item" data-xyz="1">
+            <option value="aa item" data-xyz="2">
+            <option value="C item" data-xyz="3">
+            <option value="D item" data-xyz="4">
+            <option value="E item" data-xyz="5">-->
+        </datalist>
         <label>Amount:</label>
         <input type="text" id="amountAdd" />
         <button id="addTransactionBtn">Add</button>
@@ -54,12 +61,13 @@
     <script src="https://github.com/douglascrockford/JSON-js/blob/master/json2.js"></script>
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     
-    <script>
+    <script type="text/javascript">
         $(document).ready(function () {
             $("#addTransactionBtn").click(function (event) {
                 event.preventDefault();
                 AddTransaction();
-            });                   
+            });
+
         });
 
         var timerId;
@@ -82,18 +90,17 @@
                 $('#errorText').empty();
                 $('#errors').css('display', 'none');
                 $('#registration').css('display', 'none');
-                $('#addTransactionForm').css('display', 'block'); 
-                
+                $('#addTransactionForm').css('display', 'block');
+
                 sessionStorage.setItem(tokenKey, data.access_token);
 
                 timerId = setInterval(function () {
                     GetUserInfo();
-                    alert("ok");
-                }, 2000);
+                }, 1000);
 
-                //console.log(data.access_token);
-                //GetUserInfo();
-                GetTransactions();                
+                GetTransactions();
+                GetRecipientList();
+
             }).fail(function (data) {
                 console.log(data);
                 $('#errorText').text(data.responseText);
@@ -138,7 +145,7 @@
                 data: JSON.stringify(regData),
                 contentType: "application/json;charset=utf-8"
             }).success(function (data) {
-                $('.regForm').css('display', 'none');
+                $('#regForm').css('display', 'none');
                 $('#loginForm').css('display', 'block');
                 $('#errorText').empty();
                 $('#errors').css('display', 'none');
@@ -151,7 +158,7 @@
 
         $('#canselReg').click(function (e) {
             $('#loginForm').css('display', 'block');
-            $('.regForm').css('display', 'none');
+            $('#regForm').css('display', 'none');
             $('#registration').css('display', 'block');
             $('#errorText').empty();
             $('#errors').css('display', 'none');
@@ -171,7 +178,7 @@
                     $("#userBalance").text(data.balance);
                 },
                 fail: function (data) {
-                    console.log(data);                    
+                    console.log(data);
                 }
             });
         };
@@ -187,7 +194,6 @@
                     xhr.setRequestHeader("Authorization", "Bearer " + token);
                 },
                 success: function (data) {
-                    console.log(data);
                     WriteResponse(data);
                 },
                 fail: function (data) {
@@ -197,10 +203,17 @@
         };
 
         function AddTransaction() {
+
+            var recipientName = $('#recipientAdd').val();
+            var recipientId = $('#recipientList option').filter(function () {
+                return this.value == recipientName;
+            }).data('value');
+
             var transaction = {
-                RecipientId: $('#recipientAdd').val(),
+                RecipientId: recipientId,
                 Amount: $('#amountAdd').val()
             };
+
             $.ajax({
                 url: '/api/transactions/',
                 type: 'POST',
@@ -238,6 +251,32 @@
             });
             strResult += "</table>";
             $("#viewTransactions").html(strResult);
+        };
+
+        function GetRecipientList() {
+            $.ajax({
+                url: '/getRecipientList',
+                type: 'GET',
+                dataType: 'json',
+                beforeSend: function (xhr) {
+                    var token = sessionStorage.getItem(tokenKey);
+                    xhr.setRequestHeader("Authorization", "Bearer " + token);
+                },
+                success: function (data) {
+                    WriteRecipientList(data);
+                },
+                error: function () {
+                    alert("fail");
+                }
+            });
+        };
+
+        function WriteRecipientList(recipients) {
+            var strResult;
+            $.each(recipients, function (index, recipient) {
+                strResult += "<option data-value=" + recipient.recipientId + " value=" + recipient.recipientName + "></option>";
+            });
+            $("#recipientList").html(strResult);
         };
     </script>
 </body>
