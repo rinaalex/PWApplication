@@ -53,14 +53,16 @@
 
     <script src="https://github.com/douglascrockford/JSON-js/blob/master/json2.js"></script>
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    
     <script>
         $(document).ready(function () {
             $("#addTransactionBtn").click(function (event) {
                 event.preventDefault();
                 AddTransaction();
-            });
+            });                   
         });
 
+        var timerId;
         var tokenKey = "accessToken";
         $('#submitLogin').click(function (e) {
             e.preventDefault();
@@ -75,7 +77,6 @@
                 data: JSON.stringify(loginData),
                 contentType: "application/json;charset=utf-8"
             }).success(function (data) {
-                $('#userName').text(data.username);
                 $('#userInfo').css('display', 'block');
                 $('#loginForm').css('display', 'none');
                 $('#errorText').empty();
@@ -84,8 +85,14 @@
                 $('#addTransactionForm').css('display', 'block'); 
                 
                 sessionStorage.setItem(tokenKey, data.access_token);
-                console.log(data.access_token);
-                GetUserInfo();
+
+                timerId = setInterval(function () {
+                    GetUserInfo();
+                    alert("ok");
+                }, 2000);
+
+                //console.log(data.access_token);
+                //GetUserInfo();
                 GetTransactions();                
             }).fail(function (data) {
                 console.log(data);
@@ -105,6 +112,7 @@
             $('#errors').css('display', 'none');
             $('#errorText').empty();
             sessionStorage.removeItem(tokenKey);
+            clearInterval(timerId);
         });
 
         $('#registrationBtn').click(function (e) {
