@@ -63,9 +63,7 @@ namespace PwWebApp.Controllers
             else
             {
                 Response.StatusCode = 400;
-                var message = string.Join(" | ", ModelState.Values
-                    .SelectMany(v => v.Errors)
-                    .Select(e => e.ErrorMessage));
+                var message = "The Amount should be positive";
                 await Response.WriteAsync(message);
                 return;
             }
