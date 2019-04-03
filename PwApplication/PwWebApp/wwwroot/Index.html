@@ -264,14 +264,14 @@
 
         // Вывод списка транзакций в таблицу
         function WriteResponse(transactions) {
-            var strResult = "<table><th>Id</th><th>Date/Time</th><th>Correspondent</th><th>Amount</th><th>Type</th><th>Resulting balance</th>";
+            var strResult = "<table border='1'><th>Id</th><th>Date/Time</th><th>Correspondent</th><th>Amount</th><th>Type</th><th>Resulting balance</th>";
             $.each(transactions, function (index, transaction) {
-                strResult += "<tr><td>" + transaction.transferId + "</td>";
-                strResult += "<td>" + transaction.timestamp + "</td>";
-                strResult += "<td>" + transaction.correspondent + "</td>";
-                strResult += "<td>" + transaction.amount + "</td>";
-                strResult += "<td>" + transaction.type + "</td>";
-                strResult += "<td>" + transaction.resultingBalance + "</td></tr>";
+                strResult += "<tr><td align='center'>" + transaction.transferId + "</td>";
+                strResult += "<td align='left'>" + transaction.timestamp + "</td>";
+                strResult += "<td align='center'>" + transaction.correspondent + "</td>";
+                strResult += "<td align='center'>" + transaction.amount + "</td>";
+                strResult += "<td align='center'>" + transaction.type + "</td>";
+                strResult += "<td align='center'>" + transaction.resultingBalance + "</td></tr>";
             });
             strResult += "</table>";
             $("#viewTransactions").html(strResult);
