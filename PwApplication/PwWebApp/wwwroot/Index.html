@@ -115,8 +115,8 @@
             e.preventDefault();
             $('#loginForm').css('display', 'block');
             $('#userInfo').css('display', 'none');
-            $('#recipientAdd').empty();
-            $('#recipientAmount').empty();
+            $('#recipientAdd').text("");
+            $('#amountAdd').text("");
             $('#viewTransactions').css('display', 'none');
             $('#addTransactionForm').css('display', 'none');
             $('#errors').css('display', 'none');
@@ -251,7 +251,7 @@
                         $('#errorText').empty();
                         $('#errors').css('display', 'none');
                         $('#recipientAdd').empty();
-                        $('#recipientAmount').empty();
+                        $('#amountAdd').empty();
                     },
                     error: function (data) {
                         console.log(data);
