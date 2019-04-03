@@ -24,6 +24,10 @@ namespace PwWebApp.Controllers
             this.context = context;
         }
 
+        /// <summary>
+        /// Выполняет загрузку списка транзакций авторизованного пользователя
+        /// </summary>
+        /// <returns></returns>
         [Authorize]
         [HttpGet]
         public IEnumerable<TransactionListDto> Get()
@@ -36,14 +40,11 @@ namespace PwWebApp.Controllers
             return transactions;
         }
 
-        // GET api/<controller>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<controller>
+        /// <summary>
+        /// Выполняет добавление новой транзакции
+        /// </summary>
+        /// <param name="dto">Транзакция</param>
+        /// <returns></returns>
         [Authorize]
         [HttpPost]
         public async Task Post([FromBody]AddTransactionDto dto)
@@ -69,6 +70,10 @@ namespace PwWebApp.Controllers
             }
         }
 
+        /// <summary>
+        /// Выполняет загрузку списка получателей
+        /// </summary>
+        /// <returns></returns>
         [Authorize]
         [HttpGet("/getRecipientList")]
         public IEnumerable<RecipientListDto> GetRecipientList()
@@ -77,18 +82,6 @@ namespace PwWebApp.Controllers
             var senderId = Convert.ToInt32(User.Identity.Name);
             var recipients = service.GetRecipientList(senderId);
             return recipients;
-        }
-
-        // PUT api/<controller>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/<controller>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }

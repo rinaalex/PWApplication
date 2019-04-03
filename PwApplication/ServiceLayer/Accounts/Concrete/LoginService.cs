@@ -1,5 +1,6 @@
 ﻿using DataLayer.EfCode;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace ServiceLayer.Accounts.Concrete
 {
@@ -22,7 +23,7 @@ namespace ServiceLayer.Accounts.Concrete
         /// <returns>Информация о пользователе</returns>
         public InfoUserDto Login(LoginDto dto)
         {
-            var user = context.Users.Where(p => p.Email == dto.Email && p.Password == dto.Password).FirstOrDefault();
+            var user = context.Users.AsNoTracking().Where(p => p.Email == dto.Email && p.Password == dto.Password).SingleOrDefault();
             if (user != null)
             {
                 return new InfoUserDto

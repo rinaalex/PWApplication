@@ -27,6 +27,11 @@ namespace PwWebApp.Controllers
             this.context = context;
         }
 
+        /// <summary>
+        /// Выполняет создание токена при авторизации пользователя
+        /// </summary>
+        /// <param name="dto">Учетные данные пользователя</param>
+        /// <returns></returns>
         [HttpPost("/token")]
         public async Task Token([FromBody] LoginDto dto)
         {
@@ -41,7 +46,7 @@ namespace PwWebApp.Controllers
                 }
 
                 var now = DateTime.UtcNow;
-                // создаем JWT-токен
+                // Создание JWT-токена
                 var jwt = new JwtSecurityToken(
                         issuer: AuthOptions.ISSUER,
                         audience: AuthOptions.AUDIENCE,
@@ -57,7 +62,7 @@ namespace PwWebApp.Controllers
                     username = identity.Name
                 };
 
-                // сериализация ответа
+                // Сериализация ответа
                 Response.ContentType = "application/json";
                 await Response.WriteAsync(JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented }));
             }
@@ -71,7 +76,11 @@ namespace PwWebApp.Controllers
                 return;
             }
         }
-
+        /// <summary>
+        /// Выполняет добавление нового пользователя при решистрации
+        /// </summary>
+        /// <param name="dto">Учетные данные пользователя</param>
+        /// <returns></returns>
         [HttpPost("/registration")]
         public async Task AddUser([FromBody]RegistrationDto dto)
         {
@@ -99,6 +108,10 @@ namespace PwWebApp.Controllers
             }
         }
 
+        /// <summary>
+        /// Выполняет загрузку информации об аторизованном пользователе
+        /// </summary>
+        /// <returns></returns>
         [Authorize]
         [HttpGet("/userInfo")]
         public InfoUserDto GetUserInfo()
@@ -109,8 +122,11 @@ namespace PwWebApp.Controllers
             return user;
         }
 
-
-        // поиск пользователя
+        /// <summary>
+        /// Выполняет поиск пользователя при авторизации
+        /// </summary>
+        /// <param name="dto">учетные данные пользователя</param>
+        /// <returns></returns>
         private ClaimsIdentity GetIdentity(LoginDto dto)
         {
             LoginService service = new LoginService(context);

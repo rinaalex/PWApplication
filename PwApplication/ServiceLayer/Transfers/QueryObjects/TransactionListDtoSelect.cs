@@ -24,7 +24,7 @@ namespace ServiceLayer.Transfers.QueryObjects
                     Type = p.SenderId == userId ? "Credit" : "Debit",
                     Timestamp = p.Timestamp,
                     Amount = p.Amount,
-                    ResultingBalance = p.Operations.Where(r=>r.TransferId==p.TransferId && r.UserId==userId).Select(q=>q.ResultingBalance).FirstOrDefault()
+                    ResultingBalance = p.Operations.Where(r=>r.TransferId==p.TransferId && r.UserId==userId).Select(q=>q.ResultingBalance).SingleOrDefault()
                 });
         }
     }

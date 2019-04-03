@@ -2,6 +2,9 @@
 
 namespace ServiceLayer.Accounts
 {
+    /// <summary>
+    /// Инкапсулирует информацию о пользователе для авторизации
+    /// </summary>
     public class RegistrationDto
     {
         [Required]

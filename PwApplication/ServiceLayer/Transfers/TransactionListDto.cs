@@ -4,6 +4,9 @@ using System.Text;
 using System.ComponentModel.DataAnnotations;
 namespace ServiceLayer.Transfers
 {
+    /// <summary>
+    /// Инкапсулирует информацию о транзакции для отображения в таблице
+    /// </summary>
     public class TransactionListDto
     {
         public int TransferId { get; set; }

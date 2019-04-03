@@ -4,15 +4,24 @@ using DataLayer.EfClasses;
 
 namespace ServiceLayer.Accounts.Concrete
 {
+    /// <summary>
+    /// Предоставляет метод регистрации
+    /// </summary>
     public class RegistrationService
     {
         private const decimal startBalance = 500;
         private readonly PwContext context;
+
         public RegistrationService(PwContext context)
         {
             this.context = context;
         }
 
+        /// <summary>
+        /// Выполняет добавление нового пользователя
+        /// </summary>
+        /// <param name="dto">Учетные данные пользователя</param>
+        /// <returns></returns>
         public bool AddUser(RegistrationDto dto)
         {
             if (isUnique(dto.Email))
@@ -31,6 +40,11 @@ namespace ServiceLayer.Accounts.Concrete
             return false;
         }
 
+        /// <summary>
+        /// Выполянет проверку на уникальность email
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
         private bool isUnique(string email)
         {
             var user = context.Users.Where(p => p.Email == email).FirstOrDefault();
