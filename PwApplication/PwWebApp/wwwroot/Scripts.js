@@ -25,16 +25,13 @@
             // Сохранение токена
             sessionStorage.setItem(tokenKey, data.access_token);
 
-            // Обновление информации о балансе 1 раз в секунду
-            timerId = setInterval(function () {
-                GetUserInfo();
-            }, 1000);
+            // Запуск обновлений данных пользователя
+            StartUpdations();
 
-            //GetTransactions();
+            // Загрузка списка получателей
             GetRecipientList();
 
         }).fail(function (data) {
-            //console.log(data);
             $('#errorText').text(data.responseText);
             $('#errors').toggle();//.css('display', 'block');
         });
@@ -109,6 +106,23 @@
         event.preventDefault();
         AddTransaction();
     });
+
+    // Переключение таймера при изменении фокуса окна
+    window.onfocus = StartUpdations;
+    window.onblur = StopUpdations;
+
+    function StartUpdations() {
+        // Обновление информации о балансе 1 раз в секунду
+        timerId = setInterval(function () {
+            GetUserInfo();
+        }, 1000);
+    };
+
+    function StopUpdations() {
+        window.clearInterval(timerId);
+        alert("stopped");
+    };
+
 
     // Загрузка информации о пользователе
     function GetUserInfo() {
