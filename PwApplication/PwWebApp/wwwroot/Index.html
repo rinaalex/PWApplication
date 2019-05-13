@@ -3,63 +3,65 @@
 <head>
     <meta charset="utf-8" />
     <title>PW Application</title>
+    <link href="Styles.css" rel="stylesheet"/>
 </head>
 <body>
-    <div id="errors" style="color:red;display:none;">
+    <h2>PWApplication</h2>
+    <div id="errors">
         <p><span id="errorText"></span></p>
     </div>
 
     <div id="unauthorizedUser">
         <div id="loginForm">
-            <h3>Authorization</h3>
-            <label>Enter email:</label><br />
-            <input type="email" id="emailLogin" /> <br /><br />
-            <label>Enter password:</label><br />
-            <input type="password" id="passwordLogin" /><br /><br />
-            <input type="submit" id="submitLogin" value="Login" />
+            <h3 class="formHeader">Authorization</h3>
+            <label class="formLabel">Enter email:</label><br />
+            <input class="formText" type="email" id="emailLogin"/><br />
+            <label class="formLabel">Enter password:</label><br />
+            <input class="formText" type="password" id="passwordLogin"/><br />
+            <input class="formBtn" type="submit" id="submitLogin" value="Login"/>
         </div>
 
-        <div id="registrationBtn" style="display:block;">
-            <input type="submit" id="registrationBtn" value="Registration" />
-        </div>
+        <button class="formBtn" id="registrationBtn">Registration</button>
     </div>
 
-    <div id="authorizedUser" style="display:none">
+    <div id="authorizedUser">
         <div id="userInfo">
-            <h3>Account infornation</h3>
-            <p>Your name: <span id="userName"></span></p>
-            <p>Your balance: <span id="userBalance"></span></p>
-            <input type="button" value="Logout" id="logOutBtn" />
+            <h3>Account information</h3>
+            <p class="formLabel">Your name: <span id="userName"></span></p>
+            <p class="formLabel">Your balance: <span id="userBalance"></span></p>
+            <button class="formBtn" id="logOutBtn">Logout</button>
         </div>
 
-        <div id="addTransactionForm">
-            <label>Recipient:</label>
-            <input id="recipientAdd" list="recipientList" />
-            <datalist id="recipientList"></datalist>
-            <label>Amount:</label>
-            <input type="number" min="1" id="amountAdd" />
-            <button id="addTransactionBtn">Add</button>
-        </div><br />
-
-        <div id="viewTransactions">
+        <div id="transactions">
+            <div id="addTransactionForm">
+                <h3>Send new transfer:</h3>
+                <label class="formLabel">Recipient:</label><input class="formText" id="recipientAdd" list="recipientList" />
+                <datalist id="recipientList"></datalist>
+                <label class="formLabel">Amount:</label>
+                <input class="formText" type="number" min="1" id="amountAdd" />
+                <button class="formBtn" id="addTransactionBtn">Add</button>
+            </div>
+            <h3>Your last transactions:</h3>
+            <div id="viewTransactions">
+            </div>
         </div>
-    </div>  
 
-    <div id="registrationForm" style="display:none;">
-        <h3>Registration</h3>
-        <label>Enter name:</label><br />
-        <input type="text" id="userNameReg" /><br /><br />
-        <label>Enter email:</label><br />
-        <input type="email" id="emailReg" /><br /><br />
-        <label>Enter password:</label><br />
-        <input type="password" id="passwordReg" /><br /><br />
-        <label>Enter password confirmation:</label><br />
-        <input type="password" id="passwordConfirmReg" /><br /><br />
-        <input type="submit" id="submitReg" value="Registration" />
-        <input type="submit" id="canselReg" value="Cancel" />
-    </div><br />
+        
+    </div>
 
-
+    <div id="registrationForm">
+        <h3 class="formHeader">Registration</h3>
+        <label class="formLabel">Enter name:</label><br />
+        <input class="formText" type="text" id="userNameReg"/><br />
+        <label class="formLabel">Enter email:</label><br />
+        <input class="formText" type="email" id="emailReg" /><br />
+        <label class="formLabel">Enter password:</label><br />
+        <input class="formText" type="password" id="passwordReg" /><br />
+        <label class="formLabel">Enter password confirmation:</label><br />
+        <input class="formText" type="password" id="passwordConfirmReg" /><br />
+        <input class="formBtn" type="submit" id="submitReg" value="Registration" /><br />
+        <input class="formBtn" type="submit" id="canselReg" value="Cancel" />
+    </div>
 
     <script src="https://github.com/douglascrockford/JSON-js/blob/master/json2.js"></script>
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>

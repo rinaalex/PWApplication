@@ -1,0 +1,99 @@
+﻿body {
+    font-family: Arial;
+    background-color: lightgrey;
+    color: darkslategrey;
+}
+
+#errors{
+    display: none;
+    color: red;
+}
+
+#unauthorizedUser {
+    display: block;
+    margin: auto;
+    width: 300px;
+    padding: 10px;
+}
+
+.formHeader{
+    text-align: center;
+}
+
+.formText {
+    margin: 5px;
+    font-size: 14pt;
+}
+
+.formLabel {
+    margin: 5px;
+    font-size: 14pt;
+}
+
+.formBtn {
+    margin: 5px;
+    background-color: lightseagreen;
+    color: white;
+    font-family: Arial;
+    font-size: 14pt;
+    border: 1px solid grey;
+    border-radius: 2px;
+}
+
+#registrationForm {
+    display: none;
+    margin: auto;
+    width: 300px;
+    padding: 10px;
+}
+
+#authorizedUser {
+    display: none;
+    width: 100%;
+}
+
+#userInfo {
+    float: left;
+    width: 20%;
+    display: block;
+}
+
+#transactions {
+    float: right;
+    display: block;
+    width: 75%;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 12pt;
+    text-align: left;
+}
+
+caption {
+    caption-side: top;
+    text-align: left;
+    padding: 10px;
+    font-size: 14pt;
+    font-weight: bold;
+    color: steelblue;
+}
+
+th {
+    color: white;
+    background-color: lightseagreen;
+    border-bottom: 3px solid grey;
+    padding: 10px;
+}
+
+td {
+    border-bottom: 1px solid grey;
+    padding: 10px;
+    background-color: white;
+}
+
+
+
+
+
