@@ -5,32 +5,47 @@
     <title>PW Application</title>
 </head>
 <body>
-    <div id="userInfo" style="display:none;">
-        <h3>Account infornation</h3>
-        <!--<p>Your Id: <span id="userId"></span></p>-->
-        <p>Your name: <span id="userName"></span></p>
-        <p>Your balance: <span id="userBalance"></span></p>
-        <input type="button" value="Logout" id="logOutBtn" />
-    </div>
-
     <div id="errors" style="color:red;display:none;">
         <p><span id="errorText"></span></p>
     </div>
 
-    <div id="loginForm">
-        <h3>Authorization</h3>
-        <label>Enter email:</label><br />
-        <input type="email" id="emailLogin" /> <br /><br />
-        <label>Enter password:</label><br />
-        <input type="password" id="passwordLogin" /><br /><br />
-        <input type="submit" id="submitLogin" value="Login" />
+    <div id="unauthorizedUser">
+        <div id="loginForm">
+            <h3>Authorization</h3>
+            <label>Enter email:</label><br />
+            <input type="email" id="emailLogin" /> <br /><br />
+            <label>Enter password:</label><br />
+            <input type="password" id="passwordLogin" /><br /><br />
+            <input type="submit" id="submitLogin" value="Login" />
+        </div>
+
+        <div id="registrationBtn" style="display:block;">
+            <input type="submit" id="registrationBtn" value="Registration" />
+        </div>
     </div>
 
-    <div id="registration" style="display:block;">
-        <input type="submit" id="registrationBtn" value="Registration" />
-    </div>
+    <div id="authorizedUser" style="display:none">
+        <div id="userInfo">
+            <h3>Account infornation</h3>
+            <p>Your name: <span id="userName"></span></p>
+            <p>Your balance: <span id="userBalance"></span></p>
+            <input type="button" value="Logout" id="logOutBtn" />
+        </div>
 
-    <div id="regForm" style="display:none;">
+        <div id="addTransactionForm">
+            <label>Recipient:</label>
+            <input id="recipientAdd" list="recipientList" />
+            <datalist id="recipientList"></datalist>
+            <label>Amount:</label>
+            <input type="number" min="1" id="amountAdd" />
+            <button id="addTransactionBtn">Add</button>
+        </div><br />
+
+        <div id="viewTransactions">
+        </div>
+    </div>  
+
+    <div id="registrationForm" style="display:none;">
         <h3>Registration</h3>
         <label>Enter name:</label><br />
         <input type="text" id="userNameReg" /><br /><br />
@@ -43,267 +58,12 @@
         <input type="submit" id="submitReg" value="Registration" />
         <input type="submit" id="canselReg" value="Cancel" />
     </div><br />
-    
-    <div id="addTransactionForm" style="display:none">
-        <label>Recipient:</label>
-        <input id="recipientAdd" list="recipientList"/>
-        <datalist id="recipientList">
-        </datalist>
-        <label>Amount:</label>
-        <input type="number" min="1" id="amountAdd" />
-        <button id="addTransactionBtn">Add</button>
-    </div><br/>
 
-    <div id="viewTransactions" style="display:none">
-    </div>
+
 
     <script src="https://github.com/douglascrockford/JSON-js/blob/master/json2.js"></script>
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
-    
-    <script type="text/javascript">
-        $(document).ready(function () {
-            // Кнопка Добавление транзакции
-            $("#addTransactionBtn").click(function (event) {
-                event.preventDefault();
-                AddTransaction();
-            });
-        });
 
-        var timerId;
-        var tokenKey = "accessToken";
-        // Авторизация
-        $('#submitLogin').click(function (e) {
-            e.preventDefault();
-            var loginData = {
-                grant_type: 'password',
-                Email: $('#emailLogin').val(),
-                Password: $('#passwordLogin').val()
-            };
-            $.ajax({
-                type: 'POST',
-                url: '/token',
-                data: JSON.stringify(loginData),
-                contentType: "application/json;charset=utf-8"
-            }).success(function (data) {
-                $('#userInfo').css('display', 'block');
-                $('#loginForm').css('display', 'none');
-                $('#errorText').empty();
-                $('#errors').css('display', 'none');
-                $('#registration').css('display', 'none');
-                $('#addTransactionForm').css('display', 'block');
-
-                // Сохранение токена
-                sessionStorage.setItem(tokenKey, data.access_token);
-
-                // Обновление информации о балансе 1 раз в секунду
-                timerId = setInterval(function () {
-                    GetUserInfo();
-                }, 1000);
-
-                //GetTransactions();
-                GetRecipientList();
-
-            }).fail(function (data) {
-                //console.log(data);
-                $('#errorText').text(data.responseText);
-                $('#errors').css('display', 'block');
-            });
-        });
-
-        // Выход из учетной записи
-        $('#logOutBtn').click(function (e) {
-            e.preventDefault();
-            $('#loginForm').css('display', 'block');
-            $('#userInfo').css('display', 'none');
-            $('#recipientAdd').empty();
-            $('#amountAdd').empty();
-            $('#viewTransactions').css('display', 'none');
-            $('#addTransactionForm').css('display', 'none');
-            $('#errors').css('display', 'none');
-            $('#errorText').empty();
-            // Удаление токена
-            sessionStorage.removeItem(tokenKey);
-            // Остановка таймера обновления информации о пользователе
-            clearInterval(timerId);
-        });
-
-        // Кнопка Регистрация
-        $('#registrationBtn').click(function (e) {
-            $('#loginForm').css('display', 'none');
-            $('#regForm').css('display', 'block');
-            $('#registration').css('display', 'none');
-            $('#errorText').empty();
-            $('#errors').css('display', 'none');
-        });
-
-        // Регистрация
-        $('#submitReg').click(function (e) {
-            e.preventDefault();
-            var regData =
-            {
-                UserName: $('#userNameReg').val(),
-                Email: $('#emailReg').val(),
-                Password: $('#passwordReg').val(),
-                PasswordConfirm: $('#passwordConfirmReg').val()
-            };
-            $.ajax({
-                type: 'POST',
-                url: '/registration',
-                data: JSON.stringify(regData),
-                contentType: "application/json;charset=utf-8"
-            }).success(function (data) {
-                $('#regForm').css('display', 'none');
-                $('#loginForm').css('display', 'block');
-                $('#errorText').empty();
-                $('#errors').css('display', 'none');
-            }).fail(function (data) {
-                console.log(data);
-                $('#errorText').text(data.responseText);
-                $('#errors').css('display', 'block');
-            });
-        });
-
-        // Выход из регистрации
-        $('#canselReg').click(function (e) {
-            $('#loginForm').css('display', 'block');
-            $('#regForm').css('display', 'none');
-            $('#registration').css('display', 'block');
-            $('#errorText').empty();
-            $('#errors').css('display', 'none');
-        });
-
-        // Загрузка информации о пользователе
-        function GetUserInfo() {
-
-            var oldBalance = $("#userBalance").text();
-
-            $.ajax({
-                url: '/userInfo',
-                type: 'GET',
-                dataType: 'json',
-                beforeSend: function (xhr) {
-                    var token = sessionStorage.getItem(tokenKey);
-                    xhr.setRequestHeader("Authorization", "Bearer " + token);
-                },
-                success: function (data) {
-                    $("#userName").text(data.userName);
-                    $("#userBalance").text(data.balance);
-                    // Если баланс изменился, обновляем список транзакций
-                    if (oldBalance != data.balance) {
-                        GetTransactions();
-                    };
-                },
-                fail: function (data) {
-                    console.log(data);
-                }
-            });
-        };
-
-        // Загрузка списка транзакций пользователя
-        function GetTransactions() {
-            $('#viewTransactions').css('display', 'block');
-            $.ajax({
-                url: 'api/transactions',
-                type: 'GET',
-                dataType: 'json',
-                beforeSend: function (xhr) {
-                    var token = sessionStorage.getItem(tokenKey);
-                    xhr.setRequestHeader("Authorization", "Bearer " + token);
-                },
-                success: function (data) {
-                    WriteResponse(data);
-                },
-                fail: function (data) {
-                    console.log(data);
-                }
-            });
-        };
-
-        // Создание новой транзакции
-        function AddTransaction() {
-            // Получение id получателя, выбранного в списке
-            var recipientName = $('#recipientAdd').val();
-            var recipientId = $('#recipientList option').filter(function () {
-                return this.value == recipientName;
-            }).data('value');
-            // Если введено несуществующее имя
-            if (recipientId == null) {
-                $('#errorText').text("Recipient not found!");
-                $('#errors').css('display', 'block');
-            }
-            else {
-                var transaction = {
-                    RecipientId: recipientId,
-                    Amount: $('#amountAdd').val()
-                };
-                $.ajax({
-                    url: '/api/transactions/',
-                    type: 'POST',
-                    data: JSON.stringify(transaction),
-                    contentType: "application/json;charset=utf-8",
-                    beforeSend: function (xhr) {
-                        var token = sessionStorage.getItem(tokenKey);
-                        xhr.setRequestHeader("Authorization", "Bearer " + token);
-                    },
-                    success: function () {
-                        GetUserInfo();
-                        GetTransactions();
-                        $('#errorText').empty();
-                        $('#errors').css('display', 'none');
-                        $('#recipientAdd').empty();
-                        $('#amountAdd').empty();
-                    },
-                    error: function (data) {
-                        console.log(data);
-                        $('#errorText').text(data.responseText);
-                        $('#errors').css('display', 'block');
-                    }
-                });
-            }
-        }
-
-        // Вывод списка транзакций в таблицу
-        function WriteResponse(transactions) {
-            var strResult = "<table border='1'><th>Id</th><th>Date/Time</th><th>Correspondent</th><th>Amount</th><th>Type</th><th>Resulting balance</th>";
-            $.each(transactions, function (index, transaction) {
-                strResult += "<tr><td align='center'>" + transaction.transferId + "</td>";
-                strResult += "<td align='left'>" + transaction.timestamp + "</td>";
-                strResult += "<td align='center'>" + transaction.correspondent + "</td>";
-                strResult += "<td align='center'>" + transaction.amount + "</td>";
-                strResult += "<td align='center'>" + transaction.type + "</td>";
-                strResult += "<td align='center'>" + transaction.resultingBalance + "</td></tr>";
-            });
-            strResult += "</table>";
-            $("#viewTransactions").html(strResult);
-        };
-
-        // Загрузка списка получателей
-        function GetRecipientList() {
-            $.ajax({
-                url: '/getRecipientList',
-                type: 'GET',
-                dataType: 'json',
-                beforeSend: function (xhr) {
-                    var token = sessionStorage.getItem(tokenKey);
-                    xhr.setRequestHeader("Authorization", "Bearer " + token);
-                },
-                success: function (data) {
-                    WriteRecipientList(data);
-                },
-                error: function () {
-                    alert("fail");
-                }
-            });
-        };
-
-        // Вывод списка получателей
-        function WriteRecipientList(recipients) {
-            var strResult;
-            $.each(recipients, function (index, recipient) {
-                strResult += "<option data-value=" + recipient.recipientId + " value=" + recipient.recipientName + "></option>";
-            });
-            $("#recipientList").html(strResult);
-        };
-    </script>
+    <script src="Scripts.js" type="text/javascript"></script>
 </body>
 </html>
