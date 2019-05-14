@@ -17,7 +17,7 @@
         };
         $.ajax({
             type: 'POST',
-            url: '/token',
+            url: 'api/login',
             data: JSON.stringify(loginData),
             contentType: 'application/json;charset=utf-8'
         }).success(function (data) {
@@ -39,6 +39,8 @@
 
             // Загрузка списка получателей
             GetRecipientList();
+
+            
 
         }).fail(function (data) {
             $('#errorText').text(data.responseText);
@@ -89,7 +91,7 @@
         };
         $.ajax({
             type: 'POST',
-            url: '/registration',
+            url: 'api/registration',
             data: JSON.stringify(regData),
             contentType: 'application/json;charset=utf-8'
         }).success(function (data) {
@@ -149,7 +151,7 @@
         var oldBalance = $("#userBalance").text();
 
         $.ajax({
-            url: '/userInfo',
+            url: 'api/account',
             type: 'GET',
             dataType: 'json',
             beforeSend: function (xhr) {
@@ -253,7 +255,7 @@
     };
 
     // Загрузка списка получателей
-    function GetRecipientList() {
+    function GetRecipientList() {      
         $.ajax({
             url: '/getRecipientList',
             type: 'GET',
@@ -263,7 +265,7 @@
                 xhr.setRequestHeader("Authorization", "Bearer " + token);
             },
             success: function (data) {
-                WriteRecipientList(data);
+                WriteRecipientList(data);                
             },
             error: function () {
                 alert("fail");
@@ -279,4 +281,9 @@
         });
         $("#recipientList").html(strResult);
     };
+
+    window.onload = check;
+    function check() {
+        
+    }
 });

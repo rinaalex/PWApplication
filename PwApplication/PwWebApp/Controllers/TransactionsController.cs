@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using DataLayer.EfCode;
@@ -24,10 +23,7 @@ namespace PwWebApp.Controllers
             this.context = context;
         }
 
-        /// <summary>
-        /// Выполняет загрузку списка транзакций авторизованного пользователя
-        /// </summary>
-        /// <returns></returns>
+        // GET: api/transactions
         [Authorize]
         [HttpGet]
         public IEnumerable<TransactionListDto> Get()
@@ -40,14 +36,10 @@ namespace PwWebApp.Controllers
             return transactions;
         }
 
-        /// <summary>
-        /// Выполняет добавление новой транзакции
-        /// </summary>
-        /// <param name="dto">Транзакция</param>
-        /// <returns></returns>
+        // POST: api/transactions
         [Authorize]
         [HttpPost]
-        public async Task Post([FromBody]AddTransactionDto dto)
+        public IActionResult Post([FromBody]AddTransactionDto dto)
         {
             if (ModelState.IsValid)
             {
@@ -56,24 +48,18 @@ namespace PwWebApp.Controllers
                 var transaction = service.AddTransaction(dto);
                 if (transaction == null)
                 {
-                    Response.StatusCode = 400;
-                    await Response.WriteAsync(service.LastError);
-                    return;
+                    return BadRequest(service.LastError);
                 }
+                return new ObjectResult(transaction);
             }
             else
             {
-                Response.StatusCode = 400;
-                var message = "The Amount should be positive";
-                await Response.WriteAsync(message);
-                return;
+                ModelState.AddModelError("", "The Amount should be positive");
+                return BadRequest();
             }
         }
 
-        /// <summary>
-        /// Выполняет загрузку списка получателей
-        /// </summary>
-        /// <returns></returns>
+        // GET:
         [Authorize]
         [HttpGet("/getRecipientList")]
         public IEnumerable<RecipientListDto> GetRecipientList()
@@ -82,6 +68,6 @@ namespace PwWebApp.Controllers
             var senderId = Convert.ToInt32(User.Identity.Name);
             var recipients = service.GetRecipientList(senderId);
             return recipients;
-        }
+        }        
     }
 }
