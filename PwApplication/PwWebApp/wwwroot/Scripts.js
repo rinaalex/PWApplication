@@ -1,7 +1,11 @@
 ﻿$(document).ready(function () {
 
     var timer;
+    var repeatUpdations = false;
     var tokenKey = "accessToken";
+
+    $('#errorText').empty();
+    $('#errors').css('display: none');
 
     // Авторизация
     $('#submitLogin').click(function (e) {
@@ -18,14 +22,13 @@
             contentType: 'application/json;charset=utf-8'
         }).success(function (data) {
             $('#unauthorizedUser').toggle();
-            $('#authorizedUser').toggle();
-            $('#errorText').empty();
-            $('#errors').toggle();
-
+            $('#authorizedUser').toggle();            
+            
             // Сохранение токена
             sessionStorage.setItem(tokenKey, data.access_token);
 
             // Запуск обновлений данных пользователя
+            repeatUpdations = true;
             StartUpdations();
 
             // Загрузка списка получателей
@@ -33,7 +36,8 @@
 
         }).fail(function (data) {
             $('#errorText').text(data.responseText);
-            $('#errors').toggle();
+            $('#errors').css('display: block');
+            alert("fail");
         });
     });
 
@@ -51,8 +55,10 @@
 
         // Удаление токена
         sessionStorage.removeItem(tokenKey);
+
         // Остановка таймера обновления информации о пользователе
-        clearInterval(timer);
+        StopUpdations();
+        repeatUpdations = false;
     });
 
     // Кнопка Регистрация
@@ -112,15 +118,20 @@
     window.onblur = StopUpdations;
 
     function StartUpdations() {
-        // Обновление информации о балансе 1 раз в секунду
-        timer = setInterval(function () {
-            GetUserInfo();
-        }, 1000);
+        if (repeatUpdations) {
+            // Обновление информации о балансе 1 раз в секунду
+            timer = setInterval(function () {
+                GetUserInfo();
+            }, 1000);
+            console.log("started");
+        } 
     };
 
     function StopUpdations() {
-        window.clearInterval(timer);
-        alert("stopped");
+        if (repeatUpdations) {
+            window.clearInterval(timer);
+            console.log("stopped");
+        }
     };
 
     // Загрузка информации о пользователе
