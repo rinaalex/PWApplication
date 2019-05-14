@@ -12,14 +12,14 @@
     </div>
 
     <div id="unauthorizedUser">
-        <div id="loginForm">
+        <form id="loginForm">
             <h3 class="formHeader">Authorization</h3>
             <label class="formLabel">Enter email:</label><br />
-            <input class="formText" type="email" id="emailLogin"/><br />
+            <input class="formText" type="email" id="emailLogin" autocomplete="off"/><br />
             <label class="formLabel">Enter password:</label><br />
-            <input class="formText" type="password" id="passwordLogin"/><br />
+            <input class="formText" type="password" id="passwordLogin" autocomplete="off"/><br />
             <input class="formBtn" type="submit" id="submitLogin" value="Login"/>
-        </div>
+        </form>
 
         <button class="formBtn" id="registrationBtn">Registration</button>
     </div>
@@ -49,19 +49,19 @@
         
     </div>
 
-    <div id="registrationForm">
+    <form id="registrationForm">
         <h3 class="formHeader">Registration</h3>
         <label class="formLabel">Enter name:</label><br />
-        <input class="formText" type="text" id="userNameReg"/><br />
+        <input class="formText" type="text" id="userNameReg" autocomplete="off"/><br />
         <label class="formLabel">Enter email:</label><br />
-        <input class="formText" type="email" id="emailReg" /><br />
+        <input class="formText" type="email" id="emailReg" autocomplete="off"/><br />
         <label class="formLabel">Enter password:</label><br />
-        <input class="formText" type="password" id="passwordReg" /><br />
+        <input class="formText" type="password" id="passwordReg" autocomplete="off"/><br />
         <label class="formLabel">Enter password confirmation:</label><br />
-        <input class="formText" type="password" id="passwordConfirmReg" /><br />
+        <input class="formText" type="password" id="passwordConfirmReg" autocomplete="off"/><br />
         <input class="formBtn" type="submit" id="submitReg" value="Registration" /><br />
         <input class="formBtn" type="submit" id="canselReg" value="Cancel" />
-    </div>
+    </form>
 
     <script src="https://github.com/douglascrockford/JSON-js/blob/master/json2.js"></script>
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>

@@ -21,6 +21,9 @@
             data: JSON.stringify(loginData),
             contentType: 'application/json;charset=utf-8'
         }).success(function (data) {
+            // Очистка формы
+            $('#loginForm')[0].reset();
+
             $('#unauthorizedUser').toggle();
             $('#authorizedUser').toggle();    
             
@@ -91,6 +94,10 @@
             contentType: 'application/json;charset=utf-8'
         }).success(function (data) {
             alert("Registration completed successfully!");
+
+            // Очистка формы
+            $('#registrationForm')[0].reset();
+
             $('#registrationForm').toggle();
             $('#unauthorizedUser').toggle();            
         }).fail(function (data) {
