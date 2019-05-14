@@ -1,6 +1,6 @@
 ﻿$(document).ready(function () {
 
-    var timerId;
+    var timer;
     var tokenKey = "accessToken";
 
     // Авторизация
@@ -15,7 +15,7 @@
             type: 'POST',
             url: '/token',
             data: JSON.stringify(loginData),
-            contentType: "application/json;charset=utf-8"
+            contentType: 'application/json;charset=utf-8'
         }).success(function (data) {
             $('#unauthorizedUser').toggle();
             $('#authorizedUser').toggle();
@@ -33,7 +33,7 @@
 
         }).fail(function (data) {
             $('#errorText').text(data.responseText);
-            $('#errors').toggle();//.css('display', 'block');
+            $('#errors').toggle();
         });
     });
 
@@ -52,7 +52,7 @@
         // Удаление токена
         sessionStorage.removeItem(tokenKey);
         // Остановка таймера обновления информации о пользователе
-        clearInterval(timerId);
+        clearInterval(timer);
     });
 
     // Кнопка Регистрация
@@ -78,7 +78,7 @@
             type: 'POST',
             url: '/registration',
             data: JSON.stringify(regData),
-            contentType: "application/json;charset=utf-8"
+            contentType: 'application/json;charset=utf-8'
         }).success(function (data) {
             $('#registrationForm').toggle();
             $('#unauthorizedUser').toggle();
@@ -88,7 +88,7 @@
         }).fail(function (data) {
             console.log(data);
             $('#errorText').text(data.responseText);
-            $('#errors').toggle();//.css('display', 'block');
+            $('#errors').toggle();
         });
     });
 
@@ -113,16 +113,15 @@
 
     function StartUpdations() {
         // Обновление информации о балансе 1 раз в секунду
-        timerId = setInterval(function () {
+        timer = setInterval(function () {
             GetUserInfo();
         }, 1000);
     };
 
     function StopUpdations() {
-        window.clearInterval(timerId);
+        window.clearInterval(timer);
         alert("stopped");
     };
-
 
     // Загрузка информации о пользователе
     function GetUserInfo() {
@@ -181,7 +180,7 @@
         // Если введено несуществующее имя
         if (recipientId == null) {
             $('#errorText').text("Recipient not found!");
-            $('#errors').toggle();//.css('display', 'block');
+            $('#errors').toggle();
         }
         else {
             var transaction = {
@@ -201,14 +200,14 @@
                     GetUserInfo();
                     GetTransactions();
                     $('#errorText').empty();
-                    $('#errors').toggle();//.css('display', 'none');
+                    $('#errors').toggle();
                     $('#recipientAdd').empty();
                     $('#amountAdd').empty();
                 },
                 error: function (data) {
                     console.log(data);
                     $('#errorText').text(data.responseText);
-                    $('#errors').toggle();//.css('display', 'block');
+                    $('#errors').toggle();
                 }
             });
         }
