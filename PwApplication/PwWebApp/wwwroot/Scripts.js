@@ -90,6 +90,7 @@
             data: JSON.stringify(regData),
             contentType: 'application/json;charset=utf-8'
         }).success(function (data) {
+            alert("Registration completed successfully!");
             $('#registrationForm').toggle();
             $('#unauthorizedUser').toggle();            
         }).fail(function (data) {
