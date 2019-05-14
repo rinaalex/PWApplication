@@ -5,7 +5,7 @@
     var tokenKey = "accessToken";
 
     $('#errorText').empty();
-    $('#errors').css('display: none');
+    $('#errors').hide();
 
     // Авторизация
     $('#submitLogin').click(function (e) {
@@ -22,8 +22,11 @@
             contentType: 'application/json;charset=utf-8'
         }).success(function (data) {
             $('#unauthorizedUser').toggle();
-            $('#authorizedUser').toggle();            
+            $('#authorizedUser').toggle();    
             
+            $('#errorText').empty();
+            $('#errors').hide();
+
             // Сохранение токена
             sessionStorage.setItem(tokenKey, data.access_token);
 
@@ -36,8 +39,7 @@
 
         }).fail(function (data) {
             $('#errorText').text(data.responseText);
-            $('#errors').css('display: block');
-            alert("fail");
+            $('#errors').show();            
         });
     });
 
@@ -50,7 +52,7 @@
         $('#recipientAdd').empty();
         $('#amountAdd').empty();
 
-        $('#errors').toggle();
+        $('#errors').hide();
         $('#errorText').empty();
 
         // Удаление токена
@@ -67,12 +69,14 @@
         $('#registrationForm').toggle();
 
         $('#errorText').empty();
-        $('#errors').toggle();
+        $('#errors').hide();
     });
 
     // Регистрация
     $('#submitReg').click(function (e) {
         e.preventDefault();
+        $('#errorText').empty();
+        $('#errors').hide();
         var regData =
         {
             UserName: $('#userNameReg').val(),
@@ -87,14 +91,11 @@
             contentType: 'application/json;charset=utf-8'
         }).success(function (data) {
             $('#registrationForm').toggle();
-            $('#unauthorizedUser').toggle();
-
-            $('#errorText').empty();
-            $('#errors').toggle();
+            $('#unauthorizedUser').toggle();            
         }).fail(function (data) {
             console.log(data);
             $('#errorText').text(data.responseText);
-            $('#errors').toggle();
+            $('#errors').show();
         });
     });
 
@@ -104,7 +105,7 @@
         $('#unauthorizedUser').toggle();
 
         $('#errorText').empty();
-        $('#errors').toggle();
+        $('#errors').hide();
     });
 
     // Кнопка Добавление транзакции
@@ -183,6 +184,11 @@
 
     // Создание новой транзакции
     function AddTransaction() {
+
+        $('#errorText').empty();
+        $('#errors').hide();
+
+
         // Получение id получателя, выбранного в списке
         var recipientName = $('#recipientAdd').val();
         var recipientId = $('#recipientList option').filter(function () {
@@ -191,7 +197,7 @@
         // Если введено несуществующее имя
         if (recipientId == null) {
             $('#errorText').text("Recipient not found!");
-            $('#errors').toggle();
+            $('#errors').show();
         }
         else {
             var transaction = {
@@ -210,15 +216,14 @@
                 success: function () {
                     GetUserInfo();
                     GetTransactions();
-                    $('#errorText').empty();
-                    $('#errors').toggle();
+                    
                     $('#recipientAdd').empty();
                     $('#amountAdd').empty();
                 },
                 error: function (data) {
                     console.log(data);
                     $('#errorText').text(data.responseText);
-                    $('#errors').toggle();
+                    $('#errors').show();
                 }
             });
         }
