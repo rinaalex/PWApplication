@@ -22,7 +22,7 @@ namespace ServiceLayer.Accounts.Concrete
         /// </summary>
         /// <param name="dto">Учетные данные пользователя</param>
         /// <returns></returns>
-        public bool AddUser(RegistrationDto dto)
+        public User AddUser(RegistrationDto dto)
         {
             if (isUnique(dto.Email))
             {
@@ -35,9 +35,9 @@ namespace ServiceLayer.Accounts.Concrete
                 };
                 context.Users.Add(user);
                 context.SaveChanges();
-                return true;
+                return user;
             }
-            return false;
+            return null;
         }
 
         /// <summary>

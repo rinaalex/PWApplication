@@ -74,9 +74,10 @@ namespace PwWebApp.Controllers
             if (ModelState.IsValid)
             {
                 RegistrationService service = new RegistrationService(context);
-                if (service.AddUser(dto))
+                var user = service.AddUser(dto);
+                if (user!=null)
                 {
-                    return Ok();
+                    return new ObjectResult(user);
                 }
                 else
                 {
