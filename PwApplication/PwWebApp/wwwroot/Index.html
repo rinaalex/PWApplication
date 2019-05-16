@@ -33,14 +33,16 @@
         </div>
 
         <div id="transactions">
-            <div id="addTransactionForm">
+            <form id="addTransactionForm">
                 <h3>Send new transfer:</h3>
-                <label class="formLabel">Recipient:</label><input class="formText" id="recipientAdd" list="recipientList" />
+                <label class="formLabel">Recipient:</label>
+                <input class="formText" id="recipientAdd" list="recipientList" />
                 <datalist id="recipientList"></datalist>
                 <label class="formLabel">Amount:</label>
                 <input class="formText" type="number" min="1" id="amountAdd" />
-                <button class="formBtn" id="addTransactionBtn">Add</button>
-            </div>
+                <button class="formBtn" id="addTransactionBtn" type="submit">Add</button>
+                <button class="formBtn" type="reset">Clear</button>
+            </form>
             <h3>Your last transactions:</h3>
             <div id="viewTransactions">
             </div>
