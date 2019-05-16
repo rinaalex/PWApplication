@@ -48,14 +48,14 @@ namespace PwWebApp.Controllers
                 var transaction = service.AddTransaction(dto);
                 if (transaction == null)
                 {
-                    return BadRequest(service.LastError);
+                    ModelState.AddModelError("", service.LastError);
+                    return BadRequest(ModelState);
                 }
                 return new ObjectResult(transaction);
             }
             else
             {
-                ModelState.AddModelError("", "The Amount should be positive");
-                return BadRequest();
+                return BadRequest(ModelState);
             }
         }
 

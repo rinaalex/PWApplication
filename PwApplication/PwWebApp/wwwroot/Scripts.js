@@ -4,12 +4,11 @@
     var repeatUpdations = false;
     var tokenKey = "accessToken";
 
-    $('#errorText').empty();
-    $('#errors').hide();
-
     // Авторизация
     $('#submitLogin').click(function (e) {
         e.preventDefault();
+        $("#errors").hide();
+        $("#errors").empty();        
         var loginData = {
             grant_type: 'password',
             Email: $('#emailLogin').val(),
@@ -26,9 +25,9 @@
 
             $('#unauthorizedUser').toggle();
             $('#authorizedUser').toggle();    
-            
-            $('#errorText').empty();
+
             $('#errors').hide();
+            $('#errors').empty();            
 
             // Сохранение токена
             sessionStorage.setItem(tokenKey, data.access_token);
@@ -38,13 +37,10 @@
             StartUpdations();
 
             // Загрузка списка получателей
-            GetRecipientList();
+            GetRecipientList();          
 
-            
-
-        }).fail(function (data) {
-            $('#errorText').text(data.responseText);
-            $('#errors').show();            
+        }).fail(function (data) {            
+            ShowValidationError(data);
         });
     });
 
@@ -58,7 +54,7 @@
         $('#amountAdd').empty();
 
         $('#errors').hide();
-        $('#errorText').empty();
+        $('#errors').empty();
 
         // Удаление токена
         sessionStorage.removeItem(tokenKey);
@@ -73,15 +69,16 @@
         $('#unauthorizedUser').toggle();
         $('#registrationForm').toggle();
 
-        $('#errorText').empty();
         $('#errors').hide();
+        $('#errors').empty();        
     });
 
     // Регистрация
     $('#submitReg').click(function (e) {
         e.preventDefault();
-        $('#errorText').empty();
         $('#errors').hide();
+        $('#errors').empty();
+        
         var regData =
         {
             UserName: $('#userNameReg').val(),
@@ -103,9 +100,8 @@
             $('#registrationForm').toggle();
             $('#unauthorizedUser').toggle();            
         }).fail(function (data) {
-            console.log(data);
-            $('#errorText').text(data.responseText);
-            $('#errors').show();
+            //console.log(data);
+            ShowValidationError(data);
         });
     });
 
@@ -114,8 +110,8 @@
         $('#registrationForm').toggle();
         $('#unauthorizedUser').toggle();
 
-        $('#errorText').empty();
         $('#errors').hide();
+        $('#errors').empty();        
     });
 
     // Кнопка Добавление транзакции
@@ -167,7 +163,8 @@
                 };
             },
             fail: function (data) {
-                console.log(data);
+                //console.log(data);
+                ShowError("Error loading user's information.");
             }
         });
     };
@@ -187,17 +184,16 @@
                 WriteResponse(data);
             },
             fail: function (data) {
-                console.log(data);
+                //console.log(data);
+                ShowError("Error loading transaction list.")
             }
         });
     };
 
     // Создание новой транзакции
     function AddTransaction() {
-
-        $('#errorText').empty();
         $('#errors').hide();
-
+        $('#errors').empty();  
 
         // Получение id получателя, выбранного в списке
         var recipientName = $('#recipientAdd').val();
@@ -206,8 +202,7 @@
         }).data('value');
         // Если введено несуществующее имя
         if (recipientId == null) {
-            $('#errorText').text("Recipient not found!");
-            $('#errors').show();
+            ShowError("Recipient not found!");
         }
         else {
             var transaction = {
@@ -231,9 +226,8 @@
                     $('#amountAdd').empty();
                 },
                 error: function (data) {
-                    console.log(data);
-                    $('#errorText').text(data.responseText);
-                    $('#errors').show();
+                    //console.log(data);
+                    ShowValidationError(data);
                 }
             });
         }
@@ -268,7 +262,7 @@
                 WriteRecipientList(data);                
             },
             error: function () {
-                alert("fail");
+                ShowError("Error loading recipient list.")
             }
         });
     };
@@ -285,5 +279,25 @@
     window.onload = check;
     function check() {
         
-    }
+    };
+
+    // Вывод сообщения об ошибках
+    function ShowError(errorText) {
+        $("#errors").empty();
+        $("#errors").append("<p>" + errorText + "</p>")
+        $("#errors").show();
+    };
+
+    // Вывод сообщения об ошибках валидации
+    function ShowValidationError(jxqr) {
+        $("#errors").empty();
+        if (jxqr.responseText === "") {
+            $('#errors').append("<p>" + jxqr.statusText + "</p>");
+        }
+        var response = JSON.parse(jxqr.responseText);
+        $.each(response, function (index, item) {
+            $('#errors').append("<p>" + item + "</p>");
+        });
+        $("#errors").show();
+    };
 });
