@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using DataLayer.EfCode;
 using ServiceLayer.Transfers;
 using ServiceLayer.Transfers.Concrete;
 using ServiceLayer.Transfers.QueryObjects;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -57,17 +55,6 @@ namespace PwWebApp.Controllers
             {
                 return BadRequest(ModelState);
             }
-        }
-
-        // GET:
-        [Authorize]
-        [HttpGet("/getRecipientList")]
-        public IEnumerable<RecipientListDto> GetRecipientList()
-        {
-            RecipientListService service = new RecipientListService(context);
-            var senderId = Convert.ToInt32(User.Identity.Name);
-            var recipients = service.GetRecipientList(senderId);
-            return recipients;
-        }        
+        }      
     }
 }

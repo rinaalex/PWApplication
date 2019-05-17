@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ServiceLayer.Transfers
+namespace ServiceLayer.Accounts
 {
     /// <summary>
     /// Инкапсулирует информацию о получателе для отображения в списке

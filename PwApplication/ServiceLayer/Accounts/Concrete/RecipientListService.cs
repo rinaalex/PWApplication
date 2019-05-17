@@ -4,7 +4,7 @@ using System.Linq;
 using DataLayer.EfCode;
 using Microsoft.EntityFrameworkCore;
 
-namespace ServiceLayer.Transfers.Concrete
+namespace ServiceLayer.Accounts.Concrete
 {
     /// <summary>
     /// Предоставляет метод загрузки списка получателей

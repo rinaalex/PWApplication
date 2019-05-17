@@ -5,9 +5,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using DataLayer.EfCode;
+using Microsoft.AspNetCore.Authorization;
 using ServiceLayer.Accounts.Concrete;
 using ServiceLayer.Accounts;
-using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -103,6 +103,20 @@ namespace PwWebApp.Controllers
             InfoUserService service = new InfoUserService(context);
             var user = service.GetUserInfo(userId);
             return new ObjectResult(user);
+        }
+
+        /// <summary>
+        /// Выполняет загрузку списка получателей для указанного пользователя
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet("/api/account/recipients")]
+        public IEnumerable<RecipientListDto> GetRecipientList()
+        {
+            RecipientListService service = new RecipientListService(context);
+            var senderId = Convert.ToInt32(User.Identity.Name);
+            var recipients = service.GetRecipientList(senderId);
+            return recipients;
         }
 
         /// <summary>

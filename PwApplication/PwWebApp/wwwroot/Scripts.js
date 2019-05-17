@@ -246,7 +246,7 @@
     // Загрузка списка получателей
     function GetRecipientList() {      
         $.ajax({
-            url: '/getRecipientList',
+            url: '/api/account/recipients',
             type: 'GET',
             dataType: 'json',
             beforeSend: function (xhr) {
