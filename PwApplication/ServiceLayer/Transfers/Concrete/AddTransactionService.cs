@@ -52,8 +52,8 @@ namespace ServiceLayer.Transfers.Concrete
         /// Добавляет траназкцию
         /// </summary>
         /// <param name="dto">Новая транзакция</param>
-        /// <returns></returns>
-        public Transfer AddTransaction(AddTransactionDto dto)
+        /// <returns>Информация о транзакции отправителя</returns>
+        public TransactionListDto AddTransaction(AddTransactionDto dto)
         {
             if (isValidBalance(dto.SenderId, dto.Amount))
             {
@@ -107,7 +107,17 @@ namespace ServiceLayer.Transfers.Concrete
                         recipient.Balance = incomingOperation.ResultingBalance;
                         context.SaveChanges();
                         transaction.Commit();
-                        return newTransaction;
+                        
+                        TransactionListDto transactionDto = new TransactionListDto
+                        {
+                            TransferId = newTransaction.TransferId,
+                            Correspondent = newTransaction.Recipient.UserName,
+                            Type = "Credit",
+                            Timestamp = newTransaction.Timestamp,
+                            Amount = newTransaction.Amount,
+                            ResultingBalance = outgoingOperation.ResultingBalance
+                        };
+                        return transactionDto;
                     }
                     catch(Exception ex)
                     {

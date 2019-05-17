@@ -218,15 +218,16 @@
                     var token = sessionStorage.getItem(tokenKey);
                     xhr.setRequestHeader("Authorization", "Bearer " + token);
                 },
-                success: function () {
+                success: function (data) {
                     GetUserInfo();
-                    GetTransactions();
+                    $("#tableTransactions tbody").prepend(row(data));
                     
                     $('#recipientAdd').empty();
                     $('#amountAdd').empty();
                 },
                 error: function (data) {
-                    //console.log(data);
+                    console.log(data);
+                    alert(data);
                     ShowValidationError(data);
                 }
             });
@@ -234,18 +235,12 @@
     }
 
     // Вывод списка транзакций в таблицу
-    function WriteResponse(transactions) {
-        var strResult = "<table border='1'><th>Id</th><th>Date/Time</th><th>Correspondent</th><th>Amount</th><th>Type</th><th>Resulting balance</th>";
+    function WriteResponse(transactions) {      
+        var rows = "";
         $.each(transactions, function (index, transaction) {
-            strResult += "<tr><td align='center'>" + transaction.transferId + "</td>";
-            strResult += "<td align='left'>" + transaction.timestamp + "</td>";
-            strResult += "<td align='center'>" + transaction.correspondent + "</td>";
-            strResult += "<td align='center'>" + transaction.amount + "</td>";
-            strResult += "<td align='center'>" + transaction.type + "</td>";
-            strResult += "<td align='center'>" + transaction.resultingBalance + "</td></tr>";
+            rows += row(transaction);
         });
-        strResult += "</table>";
-        $("#viewTransactions").html(strResult);
+        $("#tableTransactions tbody").append(rows);
     };
 
     // Загрузка списка получателей
@@ -299,5 +294,17 @@
             $('#errors').append("<p>" + item + "</p>");
         });
         $("#errors").show();
+    };
+
+    // Создание строки для таблицы
+    var row = function (transaction) {
+        return "<tr data-rowid='" + transaction.transferId + "'>" +
+            "<td>" + transaction.transferId + "</td>" +
+            "<td>" + transaction.timestamp + "</td>" +
+            "<td>" + transaction.correspondent + "</td > " +
+            "<td>" + transaction.amount + "</td>" + 
+            "<td>" + transaction.type + "</td>" + 
+            "<td>" + transaction.resultingBalance + "</td>" + 
+            "<td><a id='copyBtn' data-id='" + transaction.transferId + "'>Copy</a></td></tr>";
     };
 });
