@@ -71,26 +71,19 @@ table {
     text-align: left;
 }
 
-caption {
-    caption-side: top;
-    text-align: left;
-    padding: 10px;
-    font-size: 14pt;
-    font-weight: bold;
-    color: steelblue;
-}
-
 th {
     color: white;
     background-color: lightseagreen;
     border-bottom: 3px solid grey;
     padding: 10px;
+    text-align: center;
 }
 
 td {
     border-bottom: 1px solid grey;
     padding: 10px;
     background-color: white;
+    text-align: center;
 }
 
 
