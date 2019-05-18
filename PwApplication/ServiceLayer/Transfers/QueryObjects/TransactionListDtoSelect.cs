@@ -22,7 +22,7 @@ namespace ServiceLayer.Transfers.QueryObjects
                     TransferId = p.TransferId,
                     Correspondent = p.SenderId == userId ? p.Recipient.UserName : p.Sender.UserName,
                     Type = p.SenderId == userId ? "Credit" : "Debit",
-                    Timestamp = p.Timestamp,
+                    Timestamp = p.Timestamp.ToString("dd.MM.yyyy MM:HH:ss"),
                     Amount = p.Amount,
                     ResultingBalance = p.Operations.Where(r=>r.TransferId==p.TransferId && r.UserId==userId).Select(q=>q.ResultingBalance).SingleOrDefault()
                 });

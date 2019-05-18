@@ -113,7 +113,7 @@ namespace ServiceLayer.Transfers.Concrete
                             TransferId = newTransaction.TransferId,
                             Correspondent = newTransaction.Recipient.UserName,
                             Type = "Credit",
-                            Timestamp = newTransaction.Timestamp,
+                            Timestamp = newTransaction.Timestamp.ToString("dd.MM.yyyy MM:HH:ss"),
                             Amount = newTransaction.Amount,
                             ResultingBalance = outgoingOperation.ResultingBalance
                         };

@@ -20,7 +20,6 @@
             data: JSON.stringify(loginData),
             contentType: 'application/json;charset=utf-8'
         }).success(function (data) {
-            alert("ok");
             // Очистка формы
             $('#loginForm')[0].reset();
 

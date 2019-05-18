@@ -44,7 +44,7 @@ namespace ServiceLayer.Transfers.QueryObjects
                     return transactions;
                 case TransactionsFilterBy.ByDateTime:
                     var dateTime = DateTime.Parse(filterValue);
-                    return transactions.Where(p => p.Timestamp == dateTime);
+                    return transactions.Where(p => p.Timestamp == dateTime.ToString("dd.MM.yyyy MM:HH:ss"));
                 case TransactionsFilterBy.ByCorrespondent:
                     return transactions.Where(p => p.Correspondent == filterValue);
                 case TransactionsFilterBy.ByAmount:
