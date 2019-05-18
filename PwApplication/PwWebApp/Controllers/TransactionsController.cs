@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using DataLayer.EfCode;
 using ServiceLayer.Transfers;
@@ -24,14 +23,14 @@ namespace PwWebApp.Controllers
         // GET: api/transactions
         [Authorize]
         [HttpGet]
-        public IEnumerable<TransactionListDto> Get()
+        public IActionResult Get()
         {
             ListTransactionService service = new ListTransactionService(context);
             SortFilterOptions optrions = new SortFilterOptions();
             optrions.OrderByOptions = OrderByOptions.ByDateTimeDesc;
             int userId = Convert.ToInt32(User.Identity.Name);
             var transactions = service.GetList(userId, optrions);
-            return transactions;
+            return Ok(transactions);
         }
 
         // POST: api/transactions
@@ -49,7 +48,7 @@ namespace PwWebApp.Controllers
                     ModelState.AddModelError("", service.LastError);
                     return BadRequest(ModelState);
                 }
-                return new ObjectResult(transaction);
+                return Ok(transaction);
             }
             else
             {

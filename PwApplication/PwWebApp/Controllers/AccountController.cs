@@ -56,7 +56,7 @@ namespace PwWebApp.Controllers
                     access_token = encodedJwt,
                     username = identity.Name
                 };                
-                return new ObjectResult(response);
+                return Ok(response);
             }
             else
             {
@@ -77,12 +77,12 @@ namespace PwWebApp.Controllers
                 var user = service.AddUser(dto);
                 if (user!=null)
                 {
-                    return new ObjectResult(user);
+                    return Ok(user);
                 }
                 else
                 {
                     ModelState.AddModelError("", "The Email is already taken!");
-                    return new ObjectResult(ModelState);
+                    return BadRequest(ModelState);
                 }
             }
             else
@@ -102,7 +102,7 @@ namespace PwWebApp.Controllers
             int userId = Convert.ToInt32(User.Identity.Name);
             InfoUserService service = new InfoUserService(context);
             var user = service.GetUserInfo(userId);
-            return new ObjectResult(user);
+            return Ok(user);
         }
 
         /// <summary>
@@ -111,12 +111,12 @@ namespace PwWebApp.Controllers
         /// <returns></returns>
         [Authorize]
         [HttpGet("/api/account/recipients")]
-        public IEnumerable<RecipientListDto> GetRecipientList()
+        public IActionResult GetRecipientList()
         {
             RecipientListService service = new RecipientListService(context);
             var senderId = Convert.ToInt32(User.Identity.Name);
             var recipients = service.GetRecipientList(senderId);
-            return recipients;
+            return Ok(recipients);
         }
 
         /// <summary>
