@@ -4,46 +4,37 @@
     var repeatUpdations = false;
     var tokenKey = "accessToken";
 
-    // Авторизация
+    // Отправка авторизации
     $('#submitLogin').click(function (e) {
         e.preventDefault();
         $("#errors").hide();
         $("#errors").empty();        
+
         var loginData = {
             grant_type: 'password',
             Email: $('#emailLogin').val(),
             Password: $('#passwordLogin').val()
         };
-        $.ajax({
-            type: 'POST',
-            url: 'api/login',
-            data: JSON.stringify(loginData),
-            contentType: 'application/json;charset=utf-8'
-        }).success(function (data) {
+        
+        if (Login(loginData)) {
             // Очистка формы
             $('#loginForm')[0].reset();
 
             $('#unauthorizedUser').toggle();
-            $('#authorizedUser').toggle();    
+            $('#authorizedUser').toggle();
 
             $('#errors').hide();
-            $('#errors').empty();            
-
-            // Сохранение токена
-            sessionStorage.setItem(tokenKey, data.access_token);
+            $('#errors').empty();
 
             // Запуск обновлений данных пользователя
             repeatUpdations = true;
             StartUpdations();
 
             // Загрузка списка получателей
-            GetRecipientList();          
-
-        }).fail(function (data) {            
-            ShowValidationError(data);
-        });
+            GetRecipientList();
+        }              
     });
-
+       
     // Выход из учетной записи
     $('#logOutBtn').click(function (e) {
         e.preventDefault();
@@ -73,7 +64,7 @@
         $('#errors').empty();        
     });
 
-    // Регистрация
+    // Отправка регистрации
     $('#submitReg').click(function (e) {
         e.preventDefault();
         $('#errors').hide();
@@ -86,23 +77,16 @@
             Password: $('#passwordReg').val(),
             PasswordConfirm: $('#passwordConfirmReg').val()
         };
-        $.ajax({
-            type: 'POST',
-            url: 'api/registration',
-            data: JSON.stringify(regData),
-            contentType: 'application/json;charset=utf-8'
-        }).success(function (data) {
+
+        if (Registration(regData)) {
             alert("Registration completed successfully!");
 
             // Очистка формы
             $('#registrationForm')[0].reset();
 
             $('#registrationForm').toggle();
-            $('#unauthorizedUser').toggle();            
-        }).fail(function (data) {
-            //console.log(data);
-            ShowValidationError(data);
-        });
+            $('#unauthorizedUser').toggle();
+        }        
     });
 
     // Выход из регистрации
@@ -140,6 +124,44 @@
             console.log("stopped");
         }
     };
+
+    // Авторизация
+    function Login(loginData) {
+        var result = false;
+        $.ajax({
+            type: 'POST',
+            url: 'api/login',
+            data: JSON.stringify(loginData),
+            contentType: 'application/json;charset=utf-8',
+            async: false
+        }).success(function (data) {
+            // Сохранение токена
+            sessionStorage.setItem(tokenKey, data.access_token);
+            result = true;
+        }).fail(function (data) {
+            ShowValidationError(data);
+            result = false;
+        });
+        return result;
+    }
+
+    // Регистрация
+    function Registration(regData) {
+        var result = false;
+        $.ajax({
+            type: 'POST',
+            url: 'api/registration',
+            data: JSON.stringify(regData),
+            contentType: 'application/json;charset=utf-8',
+            async: false
+        }).success(function (data) {
+            result = true;
+        }).fail(function (data) {
+            result = false;
+            ShowValidationError(data);
+        });
+        return result;
+    }
 
     // Загрузка информации о пользователе
     function GetUserInfo() {
