@@ -2,7 +2,6 @@
 
     var timer;
     var repeatUpdations = false;
-    var tokenKey = "accessToken";
 
     // Отправка авторизации
     $('#submitLogin').click(function (e) {
@@ -47,8 +46,7 @@
         $('#errors').hide();
         $('#errors').empty();
 
-        // Удаление токена
-        sessionStorage.removeItem(tokenKey);
+        Logout();
 
         // Остановка таймера обновления информации о пользователе
         StopUpdations();
@@ -135,14 +133,25 @@
             contentType: 'application/json;charset=utf-8',
             async: false
         }).success(function (data) {
-            // Сохранение токена
-            sessionStorage.setItem(tokenKey, data.access_token);
             result = true;
         }).fail(function (data) {
             ShowValidationError(data);
             result = false;
         });
         return result;
+    }
+
+    function Logout() {
+        $.ajax({
+            type: 'GET',
+            url: 'api/logout',
+            beforeSend: function (xhr) {
+                var token = get_cookie("token");
+                xhr.setRequestHeader("Authorization", "Bearer " + token);
+            }
+        }).error(function () {
+            console.log("error");
+        });
     }
 
     // Регистрация

@@ -7,7 +7,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
 using DataLayer.EfCode;
 
-
 namespace PwWebApp
 {
     public class Startup

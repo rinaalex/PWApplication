@@ -51,16 +51,10 @@ namespace PwWebApp.Controllers
                         signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
                 var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
-                var response = new
-                {
-                    access_token = encodedJwt,
-                    username = identity.Name
-                };
                 Microsoft.AspNetCore.Http.CookieOptions options = new Microsoft.AspNetCore.Http.CookieOptions();
-                options.Expires = System.DateTime.Now.AddSeconds(30);
-                Response.Cookies.Append("token", response.access_token, options);
-                Response.Cookies.Append("userName", response.username, options);
-                return Ok(response);
+                options.Expires = DateTime.Now.AddSeconds(30);
+                Response.Cookies.Append("token", encodedJwt, options);
+                return Ok();
             }
             else
             {
@@ -93,6 +87,15 @@ namespace PwWebApp.Controllers
             {
                 return BadRequest(ModelState);
             }
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("/api/logout")]
+        public IActionResult LogOut()
+        {
+            Response.Cookies.Delete("token");
+            return NoContent();
         }
 
         /// <summary>
