@@ -10,7 +10,7 @@
 }
 
 #unauthorizedUser {
-    display: block;
+    display: none;
     margin: auto;
     width: 300px;
     padding: 10px;

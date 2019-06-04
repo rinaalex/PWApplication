@@ -194,9 +194,17 @@
                     GetTransactions();
                 };
             },
-            fail: function (data) {
-                //console.log(data);
-                ShowError("Error loading user's information.");
+            error: function (data) {
+                var errorcode = data.status;
+                if (errorcode == "401") {
+                    $('#unauthorizedUser').toggle();
+                    $('#authorizedUser').toggle();
+                    StopUpdations();
+                    repeatUpdations = false;
+                    ShowError("Session is over, you need to log in again.");
+                }
+                else
+                    ShowValidationError(data);
             }
         });
     };
@@ -258,9 +266,16 @@
                     $('#amountAdd').empty();
                 },
                 error: function (data) {
-                    console.log(data);
-                    alert(data);
-                    ShowValidationError(data);
+                    var errorcode = data.status;
+                    if (errorcode == "401") {
+                        $('#unauthorizedUser').toggle();
+                        $('#authorizedUser').toggle();
+                        StopUpdations();
+                        repeatUpdations = false;
+                        ShowError("Session is over, you need to log in again.");
+                    }
+                    else
+                        ShowValidationError(data);
                 }
             });
         }
@@ -308,13 +323,14 @@
         var token = document.cookie.match(new RegExp(
             "(?:^|; )" + "token".replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
         ));
-        if (token != null)
-        {
+        if (token == null) {
             $('#unauthorizedUser').toggle();
-            $('#authorizedUser').toggle();
 
             $('#errors').hide();
             $('#errors').empty();
+        }
+        else {
+            $('#authorizedUser').toggle();
 
             // Запуск обновлений данных пользователя
             repeatUpdations = true;
@@ -322,7 +338,7 @@
 
             // Загрузка списка получателей
             GetRecipientList();
-        }
+        }        
     };
 
     // Вывод сообщения об ошибках
