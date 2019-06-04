@@ -55,7 +55,11 @@ namespace PwWebApp.Controllers
                 {
                     access_token = encodedJwt,
                     username = identity.Name
-                };                
+                };
+                Microsoft.AspNetCore.Http.CookieOptions options = new Microsoft.AspNetCore.Http.CookieOptions();
+                options.Expires = System.DateTime.Now.AddSeconds(30);
+                Response.Cookies.Append("token", response.access_token, options);
+                Response.Cookies.Append("userName", response.username, options);
                 return Ok(response);
             }
             else

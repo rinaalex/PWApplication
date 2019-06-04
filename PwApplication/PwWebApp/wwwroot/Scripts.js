@@ -172,8 +172,9 @@
             url: 'api/account',
             type: 'GET',
             dataType: 'json',
+            async: false,
             beforeSend: function (xhr) {
-                var token = sessionStorage.getItem(tokenKey);
+                var token = get_cookie("token");
                 xhr.setRequestHeader("Authorization", "Bearer " + token);
             },
             success: function (data) {
@@ -199,7 +200,7 @@
             type: 'GET',
             dataType: 'json',
             beforeSend: function (xhr) {
-                var token = sessionStorage.getItem(tokenKey);
+                var token = get_cookie("token");
                 xhr.setRequestHeader("Authorization", "Bearer " + token);
             },
             success: function (data) {
@@ -237,7 +238,7 @@
                 data: JSON.stringify(transaction),
                 contentType: "application/json;charset=utf-8",
                 beforeSend: function (xhr) {
-                    var token = sessionStorage.getItem(tokenKey);
+                    var token = get_cookie("token");
                     xhr.setRequestHeader("Authorization", "Bearer " + token);
                 },
                 success: function (data) {
@@ -272,7 +273,7 @@
             type: 'GET',
             dataType: 'json',
             beforeSend: function (xhr) {
-                var token = sessionStorage.getItem(tokenKey);
+                var token = get_cookie("token");
                 xhr.setRequestHeader("Authorization", "Bearer " + token);
             },
             success: function (data) {
@@ -295,7 +296,24 @@
 
     window.onload = check;
     function check() {
-        
+        var token = document.cookie.match(new RegExp(
+            "(?:^|; )" + "token".replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+        ));
+        if (token != null)
+        {
+            $('#unauthorizedUser').toggle();
+            $('#authorizedUser').toggle();
+
+            $('#errors').hide();
+            $('#errors').empty();
+
+            // Запуск обновлений данных пользователя
+            repeatUpdations = true;
+            StartUpdations();
+
+            // Загрузка списка получателей
+            GetRecipientList();
+        }
     };
 
     // Вывод сообщения об ошибках
@@ -329,4 +347,13 @@
             "<td>" + transaction.resultingBalance + "</td>" + 
             "<td><a id='copyBtn' data-id='" + transaction.transferId + "'>Copy</a></td></tr>";
     };
+
+    function get_cookie(cookie_name) {
+        var results = document.cookie.match('(^|;) ?' + cookie_name + '=([^;]*)(;|$)');
+        if (results)
+            return (unescape(results[2]));
+        else
+            return null;
+    }
+
 });
